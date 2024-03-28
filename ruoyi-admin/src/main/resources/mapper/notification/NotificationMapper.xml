@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.notification.mapper.NotificationMapper">
+    
+    <resultMap type="Notification" id="NotificationResult">
+        <result property="id"    column="id"    />
+        <result property="recipientId"    column="recipient_id"    />
+        <result property="title"    column="title"    />
+        <result property="content"    column="content"    />
+        <result property="type"    column="type"    />
+        <result property="sendTime"    column="send_time"    />
+        <result property="priority"    column="priority"    />
+        <result property="source"    column="source"    />
+        <result property="attachments"    column="attachments"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectNotificationVo">
+        select id, recipient_id, title, content, type, send_time, priority, source, attachments, remark, create_by, create_time, update_by, update_time, del_flag from notification
+    </sql>
+
+    <select id="selectNotificationList" parameterType="Notification" resultMap="NotificationResult">
+        <include refid="selectNotificationVo"/>
+        <where>  
+            <if test="recipientId != null  and recipientId != ''"> and recipient_id = #{recipientId}</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="sendTime != null "> and send_time = #{sendTime}</if>
+            <if test="priority != null "> and priority = #{priority}</if>
+            <if test="source != null "> and source = #{source}</if>
+            <if test="attachments != null  and attachments != ''"> and attachments = #{attachments}</if>
+        </where>
+    </select>
+    
+    <select id="selectNotificationById" parameterType="Long" resultMap="NotificationResult">
+        <include refid="selectNotificationVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertNotification" parameterType="Notification" useGeneratedKeys="true" keyProperty="id">
+        insert into notification
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recipientId != null">recipient_id,</if>
+            <if test="title != null">title,</if>
+            <if test="content != null">content,</if>
+            <if test="type != null">type,</if>
+            <if test="sendTime != null">send_time,</if>
+            <if test="priority != null">priority,</if>
+            <if test="source != null">source,</if>
+            <if test="attachments != null">attachments,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recipientId != null">#{recipientId},</if>
+            <if test="title != null">#{title},</if>
+            <if test="content != null">#{content},</if>
+            <if test="type != null">#{type},</if>
+            <if test="sendTime != null">#{sendTime},</if>
+            <if test="priority != null">#{priority},</if>
+            <if test="source != null">#{source},</if>
+            <if test="attachments != null">#{attachments},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateNotification" parameterType="Notification">
+        update notification
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recipientId != null">recipient_id = #{recipientId},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="sendTime != null">send_time = #{sendTime},</if>
+            <if test="priority != null">priority = #{priority},</if>
+            <if test="source != null">source = #{source},</if>
+            <if test="attachments != null">attachments = #{attachments},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteNotificationById" parameterType="Long">
+        delete from notification where id = #{id}
+    </delete>
+
+    <delete id="deleteNotificationByIds" parameterType="String">
+        delete from notification where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

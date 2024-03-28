@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.approver.mapper.ApproverMapper">
+    
+    <resultMap type="Approver" id="ApproverResult">
+        <result property="id"    column="id"    />
+        <result property="approverId"    column="approver_id"    />
+        <result property="approverName"    column="approver_name"    />
+        <result property="roleId"    column="role_id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="authority"    column="authority"    />
+        <result property="contact"    column="contact"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectApproverVo">
+        select id, approver_id, approver_name, role_id, dept_id, authority, contact, remark, create_by, create_time, update_by, update_time, del_flag from approver
+    </sql>
+
+    <select id="selectApproverList" parameterType="Approver" resultMap="ApproverResult">
+        <include refid="selectApproverVo"/>
+        <where>  
+            <if test="approverId != null "> and approver_id = #{approverId}</if>
+            <if test="approverName != null  and approverName != ''"> and approver_name like concat('%', #{approverName}, '%')</if>
+            <if test="roleId != null "> and role_id = #{roleId}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="authority != null  and authority != ''"> and authority = #{authority}</if>
+            <if test="contact != null  and contact != ''"> and contact = #{contact}</if>
+        </where>
+    </select>
+    
+    <select id="selectApproverById" parameterType="Long" resultMap="ApproverResult">
+        <include refid="selectApproverVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertApprover" parameterType="Approver" useGeneratedKeys="true" keyProperty="id">
+        insert into approver
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="approverId != null">approver_id,</if>
+            <if test="approverName != null">approver_name,</if>
+            <if test="roleId != null">role_id,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="authority != null">authority,</if>
+            <if test="contact != null">contact,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="approverId != null">#{approverId},</if>
+            <if test="approverName != null">#{approverName},</if>
+            <if test="roleId != null">#{roleId},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="authority != null">#{authority},</if>
+            <if test="contact != null">#{contact},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateApprover" parameterType="Approver">
+        update approver
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="approverId != null">approver_id = #{approverId},</if>
+            <if test="approverName != null">approver_name = #{approverName},</if>
+            <if test="roleId != null">role_id = #{roleId},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="authority != null">authority = #{authority},</if>
+            <if test="contact != null">contact = #{contact},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteApproverById" parameterType="Long">
+        delete from approver where id = #{id}
+    </delete>
+
+    <delete id="deleteApproverByIds" parameterType="String">
+        delete from approver where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

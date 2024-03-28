@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.notification.mapper.NotificationRecordMapper">
+    
+    <resultMap type="NotificationRecord" id="NotificationRecordResult">
+        <result property="id"    column="id"    />
+        <result property="notificationId"    column="notification_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectNotificationRecordVo">
+        select id, notification_id, user_id, create_by, create_time, update_by, update_time, del_flag from notification_record
+    </sql>
+
+    <select id="selectNotificationRecordList" parameterType="NotificationRecord" resultMap="NotificationRecordResult">
+        <include refid="selectNotificationRecordVo"/>
+        <where>  
+            <if test="notificationId != null "> and notification_id = #{notificationId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+    </select>
+    
+    <select id="selectNotificationRecordById" parameterType="Long" resultMap="NotificationRecordResult">
+        <include refid="selectNotificationRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertNotificationRecord" parameterType="NotificationRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into notification_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="notificationId != null">notification_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="notificationId != null">#{notificationId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateNotificationRecord" parameterType="NotificationRecord">
+        update notification_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="notificationId != null">notification_id = #{notificationId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteNotificationRecordById" parameterType="Long">
+        delete from notification_record where id = #{id}
+    </delete>
+
+    <delete id="deleteNotificationRecordByIds" parameterType="String">
+        delete from notification_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
