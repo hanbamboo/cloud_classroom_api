@@ -36,6 +36,13 @@ public interface SysUserMapper
     public List<SysUser> selectUnallocatedList(SysUser user);
 
     /**
+     *  根据条件分页查询已配教师类型用户角色列表
+     * @param user
+     * @return
+     */
+    public List<SysUser> selectUserTeacherList(SysUser user);
+
+    /**
      * 通过用户名查询用户
      * 
      * @param userName 用户名

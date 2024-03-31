@@ -33,6 +33,7 @@ public interface ISysUserService
      * @return 用户信息集合信息
      */
     public List<SysUser> selectUnallocatedList(SysUser user);
+    public List<SysUser> selectUserTeacherList(SysUser user);
 
     /**
      * 通过用户名查询用户

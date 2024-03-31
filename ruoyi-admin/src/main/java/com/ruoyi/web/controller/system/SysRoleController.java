@@ -212,6 +212,13 @@ public class SysRoleController extends BaseController
         List<SysUser> list = userService.selectUnallocatedList(user);
         return getDataTable(list);
     }
+    @PreAuthorize("@ss.hasPermi('system:role:list')")
+    @GetMapping("/listTeacher")
+    public AjaxResult selectUserTeacherList(SysUser user)
+    {
+        List<SysUser> list = userService.selectUserTeacherList(user);
+        return AjaxResult.success(list);
+    }
 
     /**
      * 取消授权用户

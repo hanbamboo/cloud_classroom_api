@@ -42,6 +42,10 @@ public class ClassRecordServiceImpl implements IClassRecordService
     public List<ClassRecord> selectClassRecordList(ClassRecord classRecord)
     {
         return classRecordMapper.selectClassRecordList(classRecord);
+    } @Override
+    public List<ClassRecord> selectClassRecordListApp(ClassRecord classRecord)
+    {
+        return classRecordMapper.selectClassRecordListApp(classRecord);
     }
 
     /**

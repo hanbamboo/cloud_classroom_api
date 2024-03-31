@@ -1,26 +1,18 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="班级名称" prop="name">
+      <el-form-item label="学生id" prop="studentId">
         <el-input
-          v-model="queryParams.name"
-          placeholder="请输入班级名称"
+          v-model="queryParams.studentId"
+          placeholder="请输入学生id"
           clearable
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="教师id" prop="teacherId">
+      <el-form-item label="课程id" prop="courseId">
         <el-input
-          v-model="queryParams.teacherId"
-          placeholder="请输入教师id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="学院id" prop="deptId">
-        <el-input
-          v-model="queryParams.deptId"
-          placeholder="请输入学院id"
+          v-model="queryParams.courseId"
+          placeholder="请输入课程id"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -39,7 +31,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['class:record:add']"
+          v-hasPermi="['course:record:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -50,7 +42,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['class:record:edit']"
+          v-hasPermi="['course:record:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -61,7 +53,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['class:record:remove']"
+          v-hasPermi="['course:record:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -71,7 +63,7 @@
           icon="el-icon-download"
           size="mini"
           @click="handleExport"
-          v-hasPermi="['class:record:export']"
+          v-hasPermi="['course:record:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
@@ -79,10 +71,9 @@
 
     <el-table v-loading="loading" :data="recordList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="班级名称" align="center" prop="name" />
-      <el-table-column label="教师" align="center" prop="teacherName" />
-      <el-table-column label="学院" align="center" prop="deptName" />
-      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="" align="center" prop="id" />
+      <el-table-column label="学生id" align="center" prop="studentId" />
+      <el-table-column label="课程id" align="center" prop="courseId" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -90,19 +81,19 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['class:record:edit']"
+            v-hasPermi="['course:record:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['class:record:remove']"
+            v-hasPermi="['course:record:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-
+    
     <pagination
       v-show="total>0"
       :total="total"
@@ -111,20 +102,17 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改班级表对话框 -->
+    <!-- 添加或修改学生拥有的课程对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="班级名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入班级名称" />
+        <el-form-item label="学生id" prop="studentId">
+          <el-input v-model="form.studentId" placeholder="请输入学生id" />
         </el-form-item>
-        <el-form-item label="教师id" prop="teacherId">
-          <el-input v-model="form.teacherId" placeholder="请输入教师id" />
+        <el-form-item label="课程id" prop="courseId">
+          <el-input v-model="form.courseId" placeholder="请输入课程id" />
         </el-form-item>
-        <el-form-item label="学院id" prop="deptId">
-          <el-input v-model="form.deptId" placeholder="请输入学院id" />
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
+        <el-form-item label=" 标志" prop="delFlag">
+          <el-input v-model="form.delFlag" placeholder="请输入 标志" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -136,11 +124,10 @@
 </template>
 
 <script>
-import { listRecord, getRecord, delRecord, addRecord, updateRecord } from "@/api/class/record";
+import { listRecord, getRecord, delRecord, addRecord, updateRecord } from "@/api/course/record";
 
 export default {
   name: "Record",
-  dicts: ['sys_yes_no'],
   data() {
     return {
       // 遮罩层
@@ -155,7 +142,7 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 班级表表格数据
+      // 学生拥有的课程表格数据
       recordList: [],
       // 弹出层标题
       title: "",
@@ -165,9 +152,8 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        name: null,
-        teacherId: null,
-        deptId: null,
+        studentId: null,
+        courseId: null,
       },
       // 表单参数
       form: {},
@@ -180,7 +166,7 @@ export default {
     this.getList();
   },
   methods: {
-    /** 查询班级表列表 */
+    /** 查询学生拥有的课程列表 */
     getList() {
       this.loading = true;
       listRecord(this.queryParams).then(response => {
@@ -198,15 +184,13 @@ export default {
     reset() {
       this.form = {
         id: null,
-        name: null,
-        teacherId: null,
-        deptId: null,
+        studentId: null,
+        courseId: null,
         createBy: null,
         createTime: null,
         updateBy: null,
         updateTime: null,
-        delFlag: null,
-        remark: null
+        delFlag: null
       };
       this.resetForm("form");
     },
@@ -230,7 +214,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加班级表";
+      this.title = "添加学生拥有的课程";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -239,7 +223,7 @@ export default {
       getRecord(id).then(response => {
         this.form = response.data;
         this.open = true;
-        this.title = "修改班级表";
+        this.title = "修改学生拥有的课程";
       });
     },
     /** 提交按钮 */
@@ -265,7 +249,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除班级表编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除学生拥有的课程编号为"' + ids + '"的数据项？').then(function() {
         return delRecord(ids);
       }).then(() => {
         this.getList();
@@ -274,7 +258,7 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport() {
-      this.download('class/record/export', {
+      this.download('course/record/export', {
         ...this.queryParams
       }, `record_${new Date().getTime()}.xlsx`)
     }

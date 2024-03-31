@@ -21,6 +21,8 @@ public class ClassRecord extends BaseEntity
     /** 班级名称 */
     @Excel(name = "班级名称")
     private String name;
+    private String teacherName;
+    private String deptName;
 
     /** 教师id */
     @Excel(name = "教师id")
@@ -32,6 +34,7 @@ public class ClassRecord extends BaseEntity
 
     /** $column.columnComment */
     private Long delFlag;
+    private Long studentCount;
 
     public void setId(Long id) 
     {
@@ -77,6 +80,30 @@ public class ClassRecord extends BaseEntity
     public Long getDelFlag() 
     {
         return delFlag;
+    }
+
+    public Long getStudentCount() {
+        return studentCount;
+    }
+
+    public void setStudentCount(Long studentCount) {
+        this.studentCount = studentCount;
+    }
+
+    public String getTeacherName() {
+        return teacherName;
+    }
+
+    public void setTeacherName(String teacherName) {
+        this.teacherName = teacherName;
+    }
+
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
     }
 
     @Override

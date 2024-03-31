@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.course.mapper.CourseMapper">
+    
+    <resultMap type="Course" id="CourseResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="desp"    column="description"    />
+        <result property="type"    column="type"    />
+        <result property="time"    column="time"    />
+        <result property="teacherId"    column="teacher_id"    />
+        <result property="capacity"    column="capacity"    />
+        <result property="status"    column="status"    />
+        <result property="tags"    column="tags"    />
+        <result property="deptId"    column="department"    />
+        <result property="cover"    column="cover"    />
+        <result property="credits"    column="credits"    />
+        <result property="period"    column="period"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectCourseVo">
+        select id, name, description, type, time, teacher_id, capacity, status, tags, department, cover, credits, period, create_by, create_time, update_by, update_time, del_flag, remark from course
+    </sql>
+
+    <select id="selectCourseList" parameterType="Course" resultMap="CourseResult">
+        <include refid="selectCourseVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="desp != null  and desp != ''"> and description like concat('%', #{desp}, '%')</if>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="time != null "> and time = #{time}</if>
+            <if test="teacherId != null "> and teacher_id = #{teacherId}</if>
+            <if test="capacity != null "> and capacity = #{capacity}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="tags != null  and tags != ''"> and tags = #{tags}</if>
+            <if test="deptId != null "> and department = #{deptId}</if>
+            <if test="cover != null  and cover != ''"> and cover = #{cover}</if>
+            <if test="credits != null "> and credits = #{credits}</if>
+            <if test="period != null "> and period = #{period}</if>
+        </where>
+    </select>
+    
+    <select id="selectCourseById" parameterType="Long" resultMap="CourseResult">
+        <include refid="selectCourseVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCourse" parameterType="Course" useGeneratedKeys="true" keyProperty="id">
+        insert into course
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="desp != null">description,</if>
+            <if test="type != null">type,</if>
+            <if test="time != null">time,</if>
+            <if test="teacherId != null">teacher_id,</if>
+            <if test="capacity != null">capacity,</if>
+            <if test="status != null">status,</if>
+            <if test="tags != null">tags,</if>
+            <if test="deptId != null">department,</if>
+            <if test="cover != null">cover,</if>
+            <if test="credits != null">credits,</if>
+            <if test="period != null">period,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="desp != null">#{desp},</if>
+            <if test="type != null">#{type},</if>
+            <if test="time != null">#{time},</if>
+            <if test="teacherId != null">#{teacherId},</if>
+            <if test="capacity != null">#{capacity},</if>
+            <if test="status != null">#{status},</if>
+            <if test="tags != null">#{tags},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="cover != null">#{cover},</if>
+            <if test="credits != null">#{credits},</if>
+            <if test="period != null">#{period},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCourse" parameterType="Course">
+        update course
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="desp != null">description = #{desp},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="time != null">time = #{time},</if>
+            <if test="teacherId != null">teacher_id = #{teacherId},</if>
+            <if test="capacity != null">capacity = #{capacity},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="tags != null">tags = #{tags},</if>
+            <if test="deptId != null">department = #{deptId},</if>
+            <if test="cover != null">cover = #{cover},</if>
+            <if test="credits != null">credits = #{credits},</if>
+            <if test="period != null">period = #{period},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCourseById" parameterType="Long">
+        delete from course where id = #{id}
+    </delete>
+
+    <delete id="deleteCourseByIds" parameterType="String">
+        delete from course where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

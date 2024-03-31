@@ -45,6 +45,13 @@ public class ClassRecordController extends BaseController
         List<ClassRecord> list = classRecordService.selectClassRecordList(classRecord);
         return getDataTable(list);
     }
+    @PreAuthorize("@ss.hasPermi('class:record:list')")
+    @GetMapping("/app/list")
+    public AjaxResult appList(ClassRecord classRecord)
+    {
+        List<ClassRecord> list = classRecordService.selectClassRecordListApp(classRecord);
+        return AjaxResult.success(list);
+    }
 
     /**
      * 导出班级表列表

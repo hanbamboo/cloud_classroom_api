@@ -99,6 +99,12 @@ public class SysUserServiceImpl implements ISysUserService
     {
         return userMapper.selectUnallocatedList(user);
     }
+    @Override
+    @DataScope(deptAlias = "d", userAlias = "u")
+    public List<SysUser> selectUserTeacherList(SysUser user)
+    {
+        return userMapper.selectUserTeacherList(user);
+    }
 
     /**
      * 通过用户名查询用户

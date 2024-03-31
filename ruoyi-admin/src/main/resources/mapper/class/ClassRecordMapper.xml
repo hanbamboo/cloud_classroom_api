@@ -8,7 +8,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="name"    column="name"    />
         <result property="teacherId"    column="teacher_id"    />
+        <result property="teacherName"    column="teacher_name"    />
         <result property="deptId"    column="dept_id"    />
+        <result property="deptName"    column="dept_name"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -16,23 +18,54 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="delFlag"    column="del_flag"    />
         <result property="remark"    column="remark"    />
     </resultMap>
-
+    <resultMap type="ClassRecord" id="ClassRecordResultApp">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="teacherId"    column="teacher_id"    />
+        <result property="teacherName"    column="teacher_name"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="studentCount"    column="student_count"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
     <sql id="selectClassRecordVo">
-        select id, name, teacher_id, dept_id, create_by, create_time, update_by, update_time, del_flag, remark from class_record
+        select cr.id, cr.name, cr.teacher_id, cr.dept_id, cr.create_by, cr.create_time, cr.update_by, cr.update_time, cr.del_flag, cr.remark,su.nick_name as teacher_name, sd.dept_name from class_record as cr
+        left join sys_user as su on cr.teacher_id = su.user_id
+        left join sys_dept as sd on cr.dept_id = sd.dept_id
     </sql>
 
     <select id="selectClassRecordList" parameterType="ClassRecord" resultMap="ClassRecordResult">
         <include refid="selectClassRecordVo"/>
         <where>  
-            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
-            <if test="teacherId != null "> and teacher_id = #{teacherId}</if>
-            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="name != null  and name != ''"> and cr.name like concat('%', #{name}, '%')</if>
+            <if test="teacherId != null "> and cr.teacher_id = #{teacherId}</if>
+            <if test="deptId != null "> and cr.dept_id = #{deptId}</if>
         </where>
+    </select>
+    <select id="selectClassRecordListApp" parameterType="ClassRecord" resultMap="ClassRecordResultApp">
+        SELECT
+        cr.id, cr.name, cr.teacher_id, cr.dept_id, cr.create_by, cr.create_time, cr.update_by, cr.update_time, cr.del_flag, cr.remark,su.nick_name,cr.dept_name,
+        COUNT(su.class_id) AS student_count
+        FROM (
+        <include refid="selectClassRecordVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and cr.name like concat('%', #{name}, '%')</if>
+            <if test="teacherId != null "> and cr.teacher_id = #{teacherId}</if>
+            <if test="deptId != null "> and cr.dept_id = #{deptId}</if>
+        </where>
+        ) AS cr
+        LEFT JOIN sys_user AS su ON cr.id = su.class_id
+        GROUP BY cr.id
     </select>
     
     <select id="selectClassRecordById" parameterType="Long" resultMap="ClassRecordResult">
         <include refid="selectClassRecordVo"/>
-        where id = #{id}
+        where cr.id = #{id}
     </select>
         
     <insert id="insertClassRecord" parameterType="ClassRecord" useGeneratedKeys="true" keyProperty="id">

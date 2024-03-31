@@ -26,6 +26,7 @@ public interface IClassRecordService
      * @return 班级表集合
      */
     public List<ClassRecord> selectClassRecordList(ClassRecord classRecord);
+    public List<ClassRecord> selectClassRecordListApp(ClassRecord classRecord);
 
     /**
      * 新增班级表
