@@ -180,7 +180,7 @@
       <el-table-column label="课程封面" align="center" prop="cover" />
       <el-table-column label="课程学分" align="center" prop="credits" />
       <el-table-column label="授课课时" align="center" prop="period" />
-      <el-table-column label="" align="center" prop="remark" />
+      <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
