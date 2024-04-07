@@ -29,7 +29,7 @@
         <el-date-picker clearable
           v-model="queryParams.approvalTime"
           type="date"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd HH:mm:ss"
           placeholder="请选择审批时间">
         </el-date-picker>
       </el-form-item>
@@ -148,7 +148,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -170,7 +170,7 @@
           <el-date-picker clearable
             v-model="form.approvalTime"
             type="date"
-            value-format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="请选择审批时间">
           </el-date-picker>
         </el-form-item>

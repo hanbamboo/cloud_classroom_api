@@ -29,8 +29,8 @@ public class CheckinRecord extends BaseEntity
     private Long studentId;
 
     /** 签到时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "签到时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "签到时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date checkinTime;
 
     /** 已签到、未签到、迟到字典 */

@@ -1,6 +1,8 @@
 package com.ruoyi.course.service;
 
 import java.util.List;
+
+import com.ruoyi.course.domain.CourseNumStatus;
 import com.ruoyi.course.domain.CourseRecord;
 
 /**
@@ -34,6 +36,12 @@ public interface ICourseRecordService
      * @return 结果
      */
     public int insertCourseRecord(CourseRecord courseRecord);
+    public int insertCourseRecordWithIds(List<CourseRecord> records);
+
+    /**
+     * 查询学生在某个课程中的人数
+     */
+    public CourseNumStatus getCourseNumStatus(CourseNumStatus course);
 
     /**
      * 修改学生拥有的课程

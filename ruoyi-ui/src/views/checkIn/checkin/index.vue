@@ -21,7 +21,7 @@
         <el-date-picker clearable
           v-model="queryParams.startTime"
           type="date"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd HH:mm:ss"
           placeholder="请选择开始时间">
         </el-date-picker>
       </el-form-item>
@@ -29,7 +29,7 @@
         <el-date-picker clearable
           v-model="queryParams.endTime"
           type="date"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd  HH:mm:ss"
           placeholder="请选择结束时间">
         </el-date-picker>
       </el-form-item>
@@ -110,12 +110,12 @@
       <el-table-column label="教师id" align="center" prop="teacherId" />
       <el-table-column label="开始时间" align="center" prop="startTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.startTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="结束时间" align="center" prop="endTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="指定的签到方式" align="center" prop="method">
@@ -144,7 +144,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -166,7 +166,7 @@
           <el-date-picker clearable
             v-model="form.startTime"
             type="date"
-            value-format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="请选择开始时间">
           </el-date-picker>
         </el-form-item>
@@ -174,7 +174,7 @@
           <el-date-picker clearable
             v-model="form.endTime"
             type="date"
-            value-format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="请选择结束时间">
           </el-date-picker>
         </el-form-item>

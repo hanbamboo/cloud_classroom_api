@@ -21,7 +21,7 @@
         <el-date-picker clearable
           v-model="queryParams.startTime"
           type="date"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd HH:mm:ss"
           placeholder="请选择开始时间">
         </el-date-picker>
       </el-form-item>
@@ -29,7 +29,7 @@
         <el-date-picker clearable
           v-model="queryParams.endTime"
           type="date"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd HH:mm:ss"
           placeholder="请选择结束时间">
         </el-date-picker>
       </el-form-item>
@@ -55,7 +55,7 @@
         <el-date-picker clearable
           v-model="queryParams.applyTime"
           type="date"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd HH:mm:ss"
           placeholder="请选择申请时间">
         </el-date-picker>
       </el-form-item>
@@ -194,7 +194,7 @@
           <el-date-picker clearable
             v-model="form.startTime"
             type="date"
-            value-format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="请选择开始时间">
           </el-date-picker>
         </el-form-item>
@@ -202,7 +202,7 @@
           <el-date-picker clearable
             v-model="form.endTime"
             type="date"
-            value-format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="请选择结束时间">
           </el-date-picker>
         </el-form-item>
@@ -223,7 +223,7 @@
           <el-date-picker clearable
             v-model="form.applyTime"
             type="date"
-            value-format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="请选择申请时间">
           </el-date-picker>
         </el-form-item>

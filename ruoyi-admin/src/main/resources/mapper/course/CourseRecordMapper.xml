@@ -14,6 +14,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="delFlag"    column="del_flag"    />
     </resultMap>
+    <resultMap type="CourseNumStatus" id="CourseRecordHasResult">
+        <result property="id"    column="id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="selectNum"    column="select_num"    />
+        <result property="exists"    column="custom_id_exists"    />
+    </resultMap>
 
     <sql id="selectCourseRecordVo">
         select id, student_id, course_id, create_by, create_time, update_by, update_time, del_flag from course_record
@@ -31,7 +38,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectCourseRecordVo"/>
         where id = #{id}
     </select>
-        
+    <select id="getCourseStudentNumber" resultMap="CourseRecordHasResult" parameterType="CourseNumStatus">
+        SELECT
+            id,
+            IFNULL(count(student_id), 0) as select_num,
+               CASE
+                   WHEN EXISTS (SELECT 1 FROM course_record WHERE student_id = #{studentId} AND course_id = #{courseId})
+                       THEN 'yes'
+                ELSE 'no'
+               END AS custom_id_exists
+        FROM course_record
+        where course_id = #{courseId}
+    </select>
+
     <insert id="insertCourseRecord" parameterType="CourseRecord" useGeneratedKeys="true" keyProperty="id">
         insert into course_record
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -52,6 +71,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime},</if>
             <if test="delFlag != null">#{delFlag},</if>
          </trim>
+    </insert>
+    <insert id="insertCourseRecordWithIds" parameterType="CourseRecord">
+        insert into course_record (student_id,course_id) values
+        <foreach item="record" index="index" collection="collection" open="(" separator="),(" close=")">
+            #{record.studentId}, #{record.courseId}
+        </foreach>
     </insert>
 
     <update id="updateCourseRecord" parameterType="CourseRecord">

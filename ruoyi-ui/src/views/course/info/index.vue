@@ -31,7 +31,7 @@
         <el-date-picker clearable
           v-model="queryParams.time"
           type="date"
-          value-format="yyyy-MM-dd"
+          value-format="yyyy-MM-dd HH:mm:ss"
           placeholder="请选择上课时间">
         </el-date-picker>
       </el-form-item>
@@ -232,7 +232,7 @@
           <el-date-picker clearable
             v-model="form.time"
             type="date"
-            value-format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="请选择上课时间">
           </el-date-picker>
         </el-form-item>

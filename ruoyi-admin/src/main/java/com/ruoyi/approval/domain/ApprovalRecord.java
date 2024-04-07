@@ -33,8 +33,8 @@ public class ApprovalRecord extends BaseEntity
     private String comment;
 
     /** 审批时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "审批时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "审批时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date approvalTime;
 
     /** 待审批、已批准、已拒绝、已撤销、已转交、已过期等 */

@@ -2,6 +2,7 @@ package com.ruoyi.course.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.course.domain.CourseNumStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.course.mapper.CourseRecordMapper;
@@ -55,6 +56,25 @@ public class CourseRecordServiceImpl implements ICourseRecordService
     {
         courseRecord.setCreateTime(DateUtils.getNowDate());
         return courseRecordMapper.insertCourseRecord(courseRecord);
+    }
+
+    @Override
+    public int insertCourseRecordWithIds(List<CourseRecord> records) {
+        return courseRecordMapper.insertCourseRecordWithIds(records);
+    }
+
+    @Override
+    public CourseNumStatus getCourseNumStatus(CourseNumStatus course) {
+        CourseNumStatus courseNumStatus =courseRecordMapper.getCourseStudentNumber(course);
+        if (courseNumStatus.getSelectNum()<course.getCapacity()&&"no".equals( courseNumStatus.getExists())){
+            CourseRecord courseRecord = new CourseRecord();
+            courseRecord.setCourseId(course.getCourseId());
+            courseRecord.setStudentId(course.getStudentId());
+            courseRecordMapper.insertCourseRecord(courseRecord);
+        }else if ("yes".equals(courseNumStatus.getExists())){
+            courseRecordMapper.deleteCourseRecordById(courseNumStatus.getId());
+        }
+        return courseRecordMapper.getCourseStudentNumber(course);
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.ruoyi.course.mapper;
 
 import java.util.List;
+
+import com.ruoyi.course.domain.CourseNumStatus;
 import com.ruoyi.course.domain.CourseRecord;
 
 /**
@@ -34,6 +36,8 @@ public interface CourseRecordMapper
      * @return 结果
      */
     public int insertCourseRecord(CourseRecord courseRecord);
+    public int insertCourseRecordWithIds(List<CourseRecord> records);
+    public CourseNumStatus getCourseStudentNumber(CourseNumStatus course);
 
     /**
      * 修改学生拥有的课程

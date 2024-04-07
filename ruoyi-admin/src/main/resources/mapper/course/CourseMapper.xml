@@ -26,9 +26,50 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remark"    column="remark"    />
     </resultMap>
 
+    <resultMap type="CourseDTO" id="CourseResultDTO">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="desp"    column="description"    />
+        <result property="type"    column="type"    />
+        <result property="time"    column="time"    />
+        <result property="teacherId"    column="teacher_id"    />
+        <result property="teacherName"    column="teacher_name"    />
+        <result property="capacity"    column="capacity"    />
+        <result property="status"    column="status"    />
+        <result property="tags"    column="tags"    />
+        <result property="deptId"    column="department"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="cover"    column="cover"    />
+        <result property="credits"    column="credits"    />
+        <result property="period"    column="period"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
     <sql id="selectCourseVo">
-        select c.id, c.name, c.description, c.type, c.time, c.teacher_id, c.capacity, c.status, c.tags, c.department, c.cover, c.credits, c.period, c.create_by, c.create_time, c.update_by, c.update_time, c.del_flag, c.remark from course c
-            left join sys_dept d on c.department = d.dept_id
+        select c.id,
+               c.name,
+               c.description,
+               c.type,
+               c.time,
+               c.teacher_id,
+               c.capacity,
+               c.status,
+               c.tags,
+               c.department,
+               c.cover,
+               c.credits,
+               c.period,
+               c.create_by,
+               c.create_time,
+               c.update_by,
+               c.update_time,
+               c.del_flag,
+               c.remark,
+               d.dept_name,
+               u.nick_name as teacher_name
+        from course c
+                 left join sys_dept d on c.department = d.dept_id
+                 left join sys_user u on c.teacher_id = u.user_id
     </sql>
 
     <select id="selectCourseList" parameterType="Course" resultMap="CourseResult">
@@ -53,7 +94,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectCourseVo"/>
         where c.id = #{id}
     </select>
-        
+    <select id="selectCourseListApp" parameterType="CourseDTO" resultMap="CourseResultDTO">
+        <include refid="selectCourseVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and c.name like concat('%', #{name}, '%')</if>
+            <if test="desp != null  and desp != ''"> and c.description like concat('%', #{desp}, '%')</if>
+            <if test="type != null "> and c.type = #{type}</if>
+            <if test="time != null "> and c.time = #{time}</if>
+            <if test="teacherId != null "> and c.teacher_id = #{teacherId}</if>
+            <if test="capacity != null "> and c.capacity = #{capacity}</if>
+            <if test="status != null "> and c.status = #{status}</if>
+            <if test="tags != null  and tags != ''"> and c.tags = #{tags}</if>
+            <if test="deptId != null and deptId != 0 "> and (c.department = #{deptId} OR c.department IN ( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(#{deptId}, ancestors) ))</if>
+            <if test="cover != null  and cover != ''"> and c.cover = #{cover}</if>
+            <if test="credits != null "> and c.credits = #{credits}</if>
+            <if test="period != null "> and c.period = #{period}</if>
+        </where>
+    </select>
+
     <insert id="insertCourse" parameterType="Course" useGeneratedKeys="true" keyProperty="id">
         insert into course
         <trim prefix="(" suffix=")" suffixOverrides=",">

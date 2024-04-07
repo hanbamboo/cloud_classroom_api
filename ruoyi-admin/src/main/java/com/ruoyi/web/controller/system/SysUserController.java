@@ -65,6 +65,18 @@ public class SysUserController extends BaseController
         return getDataTable(list);
     }
 
+    /**
+     * 获取用户列表 app
+     */
+    @PreAuthorize("@ss.hasPermi('system:user:list')")
+    @GetMapping("/app/list")
+    public AjaxResult appList(SysUser user)
+    {
+        List<SysUser> list = userService.selectUserList(user);
+        return AjaxResult.success(list);
+    }
+
+
     @Log(title = "用户管理", businessType = BusinessType.EXPORT)
     @PreAuthorize("@ss.hasPermi('system:user:export')")
     @PostMapping("/export")

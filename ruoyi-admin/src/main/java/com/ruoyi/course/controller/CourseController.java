@@ -2,6 +2,8 @@ package com.ruoyi.course.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.course.domain.CourseDTO;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,9 +49,9 @@ public class CourseController extends BaseController
     }
     @PreAuthorize("@ss.hasPermi('course:info:list')")
     @GetMapping("/app/list")
-    public AjaxResult appList(Course course)
+    public AjaxResult appList(CourseDTO course)
     {
-        List<Course> list = courseService.selectCourseList(course);
+        List<CourseDTO> list = courseService.selectCourseListApp(course);
         return AjaxResult.success(list);
     }
 

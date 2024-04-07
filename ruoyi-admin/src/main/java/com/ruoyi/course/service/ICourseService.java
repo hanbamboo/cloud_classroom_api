@@ -2,6 +2,7 @@ package com.ruoyi.course.service;
 
 import java.util.List;
 import com.ruoyi.course.domain.Course;
+import com.ruoyi.course.domain.CourseDTO;
 
 /**
  * 课程Service接口
@@ -26,6 +27,7 @@ public interface ICourseService
      * @return 课程集合
      */
     public List<Course> selectCourseList(Course course);
+    public List<CourseDTO> selectCourseListApp(CourseDTO course);
 
     /**
      * 新增课程
