@@ -37,12 +37,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="reason != null  and reason != ''"> and reason = #{reason}</if>
             <if test="applyTime != null "> and apply_time = #{applyTime}</if>
             <if test="status != null "> and status = #{status}</if>
+             and del_flag = 0
         </where>
     </select>
     
     <select id="selectLeaveApplicationById" parameterType="Long" resultMap="LeaveApplicationResult">
         <include refid="selectLeaveApplicationVo"/>
-        where id = #{id}
+        where id = #{id} and del_flag = 0
     </select>
         
     <insert id="insertLeaveApplication" parameterType="LeaveApplication" useGeneratedKeys="true" keyProperty="id">
@@ -103,11 +104,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteLeaveApplicationById" parameterType="Long">
-        delete from leave_application where id = #{id}
+        update leave_application set del_flag = 1 where id = #{id}
     </delete>
 
     <delete id="deleteLeaveApplicationByIds" parameterType="String">
-        delete from leave_application where id in 
+        update leave_application set del_flag = 1 where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

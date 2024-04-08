@@ -45,6 +45,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != null  and name != ''"> and cr.name like concat('%', #{name}, '%')</if>
             <if test="teacherId != null "> and cr.teacher_id = #{teacherId}</if>
             <if test="deptId != null "> and cr.dept_id = #{deptId}</if>
+             and cr.del_flag = 0
         </where>
     </select>
     <select id="selectClassRecordListApp" parameterType="ClassRecord" resultMap="ClassRecordResultApp">
@@ -57,6 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="name != null  and name != ''"> and cr.name like concat('%', #{name}, '%')</if>
             <if test="teacherId != null "> and cr.teacher_id = #{teacherId}</if>
             <if test="deptId != null "> and cr.dept_id = #{deptId}</if>
+            and cr.del_flag = 0
         </where>
         ) AS cr
         LEFT JOIN sys_user AS su ON cr.id = su.class_id
@@ -65,7 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectClassRecordById" parameterType="Long" resultMap="ClassRecordResult">
         <include refid="selectClassRecordVo"/>
-        where cr.id = #{id}
+        where cr.id = #{id} and cr.del_flag = 0
     </select>
         
     <insert id="insertClassRecord" parameterType="ClassRecord" useGeneratedKeys="true" keyProperty="id">
@@ -111,11 +113,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteClassRecordById" parameterType="Long">
-        delete from class_record where id = #{id}
+        update class_record set del_flag = 1 where id = #{id}
     </delete>
 
     <delete id="deleteClassRecordByIds" parameterType="String">
-        delete from class_record where id in 
+        update class_record set del_flag = 1 where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

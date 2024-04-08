@@ -18,7 +18,7 @@ public interface ICourseService
      * @param id 课程主键
      * @return 课程
      */
-    public Course selectCourseById(Long id);
+    public CourseDTO selectCourseById(Long id);
 
     /**
      * 查询课程列表

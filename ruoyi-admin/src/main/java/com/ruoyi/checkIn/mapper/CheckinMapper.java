@@ -2,6 +2,7 @@ package com.ruoyi.checkIn.mapper;
 
 import java.util.List;
 import com.ruoyi.checkIn.domain.Checkin;
+import com.ruoyi.checkIn.domain.CheckinVo;
 
 /**
  * 签到信息Mapper接口
@@ -18,6 +19,8 @@ public interface CheckinMapper
      * @return 签到信息
      */
     public Checkin selectCheckinById(String id);
+    public Checkin getCurrentCheckin(CheckinVo checkinVo);
+    public Checkin getCurrentCheckinStudent(CheckinVo checkinVo);
 
     /**
      * 查询签到信息列表

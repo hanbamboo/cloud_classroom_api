@@ -87,12 +87,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="cover != null  and cover != ''"> and c.cover = #{cover}</if>
             <if test="credits != null "> and c.credits = #{credits}</if>
             <if test="period != null "> and c.period = #{period}</if>
+             and c.del_flag = 0
         </where>
     </select>
     
-    <select id="selectCourseById" parameterType="Long" resultMap="CourseResult">
+    <select id="selectCourseById" parameterType="Long" resultMap="CourseResultDTO">
         <include refid="selectCourseVo"/>
-        where c.id = #{id}
+        where c.id = #{id} and c.del_flag = 0
     </select>
     <select id="selectCourseListApp" parameterType="CourseDTO" resultMap="CourseResultDTO">
         <include refid="selectCourseVo"/>
@@ -109,7 +110,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="cover != null  and cover != ''"> and c.cover = #{cover}</if>
             <if test="credits != null "> and c.credits = #{credits}</if>
             <if test="period != null "> and c.period = #{period}</if>
+            and c.del_flag = 0
         </where>
+    </select>
+    <select id="selectCourseByTeacherId" parameterType="Long" resultMap="CourseResult">
+        <include refid="selectCourseVo"/>
+        where c.teacher_id = #{teacherId} and c.del_flag = 0
     </select>
 
     <insert id="insertCourse" parameterType="Course" useGeneratedKeys="true" keyProperty="id">
@@ -182,11 +188,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteCourseById" parameterType="Long">
-        delete from course where id = #{id}
+        update course set del_flag = 1 where id = #{id}
     </delete>
 
     <delete id="deleteCourseByIds" parameterType="String">
-        delete from course where id in 
+        update course set del_flag = 1 where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

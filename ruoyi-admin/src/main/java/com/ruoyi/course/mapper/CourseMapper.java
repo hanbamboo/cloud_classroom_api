@@ -18,7 +18,8 @@ public interface CourseMapper
      * @param id 课程主键
      * @return 课程
      */
-    public Course selectCourseById(Long id);
+    public CourseDTO selectCourseById(Long id);
+    public List<Course> selectCourseByTeacherId(Long teacherId);
 
     /**
      * 查询课程列表

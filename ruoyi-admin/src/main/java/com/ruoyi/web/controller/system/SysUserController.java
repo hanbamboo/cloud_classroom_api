@@ -68,7 +68,7 @@ public class SysUserController extends BaseController
     /**
      * 获取用户列表 app
      */
-    @PreAuthorize("@ss.hasPermi('system:user:list')")
+//    @PreAuthorize("@ss.hasPermi('system:user:list')")
     @GetMapping("/app/list")
     public AjaxResult appList(SysUser user)
     {

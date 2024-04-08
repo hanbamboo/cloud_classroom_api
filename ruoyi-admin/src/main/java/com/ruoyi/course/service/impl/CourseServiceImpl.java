@@ -32,7 +32,7 @@ public class CourseServiceImpl implements ICourseService {
      * @return 课程
      */
     @Override
-    public Course selectCourseById(Long id) {
+    public CourseDTO selectCourseById(Long id) {
         return courseMapper.selectCourseById(id);
     }
 

@@ -2,6 +2,7 @@ package com.ruoyi.checkIn.service;
 
 import java.util.List;
 import com.ruoyi.checkIn.domain.Checkin;
+import com.ruoyi.checkIn.domain.CheckinVo;
 
 /**
  * 签到信息Service接口
@@ -18,6 +19,12 @@ public interface ICheckinService
      * @return 签到信息
      */
     public Checkin selectCheckinById(String id);
+
+    /**
+     * 查询当前时间中的签到信息
+     *
+     */
+    public CheckinVo getCurrentCheckin(CheckinVo checkin);
 
     /**
      * 查询签到信息列表

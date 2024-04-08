@@ -2,6 +2,9 @@ package com.ruoyi.checkIn.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.checkIn.domain.CheckinVo;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,6 +50,23 @@ public class CheckinController extends BaseController
     }
 
     /**
+     * 查询当前时间中的签到信息
+     */
+//    @PreAuthorize("@ss.hasPermi('checkIn:checkin:list')")
+    @PostMapping("/current")
+    public AjaxResult current(@RequestBody CheckinVo checkin)
+    {
+        CheckinVo checkinData = checkinService.getCurrentCheckin(checkin);
+        if(checkinData != null){
+            return AjaxResult.success(checkinService.getCurrentCheckin(checkin)) ;
+        }else {
+            return AjaxResult.success("当前没有签到信息") ;
+        }
+
+    }
+
+
+    /**
      * 导出签到信息列表
      */
     @PreAuthorize("@ss.hasPermi('checkIn:checkin:export')")
@@ -72,7 +92,7 @@ public class CheckinController extends BaseController
     /**
      * 新增签到信息
      */
-    @PreAuthorize("@ss.hasPermi('checkIn:checkin:add')")
+//    @PreAuthorize("@ss.hasPermi('checkIn:checkin:add')")
     @Log(title = "签到信息", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Checkin checkin)
@@ -83,7 +103,7 @@ public class CheckinController extends BaseController
     /**
      * 修改签到信息
      */
-    @PreAuthorize("@ss.hasPermi('checkIn:checkin:edit')")
+//    @PreAuthorize("@ss.hasPermi('checkIn:checkin:edit')")
     @Log(title = "签到信息", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody Checkin checkin)

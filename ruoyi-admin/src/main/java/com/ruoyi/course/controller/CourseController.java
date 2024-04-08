@@ -47,7 +47,7 @@ public class CourseController extends BaseController
         List<Course> list = courseService.selectCourseList(course);
         return getDataTable(list);
     }
-    @PreAuthorize("@ss.hasPermi('course:info:list')")
+//    @PreAuthorize("@ss.hasPermi('course:info:list')")
     @GetMapping("/app/list")
     public AjaxResult appList(CourseDTO course)
     {

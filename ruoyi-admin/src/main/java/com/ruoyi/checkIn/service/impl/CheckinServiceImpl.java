@@ -1,7 +1,19 @@
 package com.ruoyi.checkIn.service.impl;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
+import com.ruoyi.checkIn.domain.CheckinVo;
+import com.ruoyi.common.core.domain.entity.SysDictData;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.course.domain.Course;
+import com.ruoyi.course.domain.CourseDTO;
+import com.ruoyi.course.domain.CourseRecord;
+import com.ruoyi.course.mapper.CourseMapper;
+import com.ruoyi.course.mapper.CourseRecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.checkIn.mapper.CheckinMapper;
@@ -10,87 +22,149 @@ import com.ruoyi.checkIn.service.ICheckinService;
 
 /**
  * 签到信息Service业务层处理
- * 
+ *
  * @author hanbamboo
  * @date 2024-03-26
  */
 @Service
-public class CheckinServiceImpl implements ICheckinService 
-{
+public class CheckinServiceImpl implements ICheckinService {
     @Autowired
     private CheckinMapper checkinMapper;
+    @Autowired
+    private CourseRecordMapper courseRecordMapper;
+    @Autowired
+    private CourseMapper courseMapper;
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 查询签到信息
-     * 
+     *
      * @param id 签到信息主键
      * @return 签到信息
      */
     @Override
-    public Checkin selectCheckinById(String id)
-    {
+    public Checkin selectCheckinById(String id) {
         return checkinMapper.selectCheckinById(id);
+    }
+
+    @Override
+    public CheckinVo getCurrentCheckin(CheckinVo checkin) {
+        Collection<String> keys = redisCache.keys("checkin:*");
+        if(keys.isEmpty()){
+            return null;
+        }
+        if("student".equals( checkin.getRoleKey())){
+            CourseRecord courseRecord = new CourseRecord();
+            courseRecord.setStudentId(checkin.getTeacherId());
+            List<CourseRecord> records = courseRecordMapper.selectCourseRecordList(courseRecord);
+            for (CourseRecord record : records) {
+                String key = "checkin:" + record.getCourseId();
+                if (keys.contains(key) && Objects.equals(record.getStudentId(), checkin.getTeacherId())) {
+                    Object checkinValue = redisCache.getCacheObject(key);
+                    if (checkinValue != null) {
+                        return (CheckinVo) checkinValue;
+                    }
+                }
+            }
+        }else{
+            List<Course> courses = courseMapper.selectCourseByTeacherId(checkin.getTeacherId());
+            if (courses != null) {
+                for (Course course : courses) {
+                    String key = "checkin:" + course.getId();
+                    if(keys.contains(key)){
+                        Object checkinValue = redisCache.getCacheObject(key);
+                        if (checkinValue != null) {
+                            return (CheckinVo) checkinValue;
+                        }
+                    }
+
+                }
+
+            }
+        }
+
+        return null;
     }
 
     /**
      * 查询签到信息列表
-     * 
+     *
      * @param checkin 签到信息
      * @return 签到信息
      */
     @Override
-    public List<Checkin> selectCheckinList(Checkin checkin)
-    {
+    public List<Checkin> selectCheckinList(Checkin checkin) {
         return checkinMapper.selectCheckinList(checkin);
     }
 
     /**
      * 新增签到信息
-     * 
+     *
      * @param checkin 签到信息
      * @return 结果
      */
     @Override
-    public int insertCheckin(Checkin checkin)
-    {
+    public int insertCheckin(Checkin checkin) {
         checkin.setCreateTime(DateUtils.getNowDate());
+        Object data = redisCache.getCacheObject("checkin:" + checkin.getCourseId());
+        if (data != null) {
+            throw new RuntimeException("当前已存在进行中的签到！请勿重复发布！");
+        }
+        CourseDTO course = courseMapper.selectCourseById(checkin.getCourseId());
+        CheckinVo checkinVo = new CheckinVo();
+        List<SysDictData> dictData = redisCache.getCacheObject("sys_dict:class_checkin_type" );
+        for (SysDictData dictDatum : dictData) {
+            if(checkin.getMethod().toString().equals(dictDatum.getDictValue())){
+                checkinVo.setMethodName(dictDatum.getDictLabel());
+            }
+        }
+        checkinVo.setCourseId(checkin.getCourseId());
+        checkinVo.setTeacherId(checkin.getTeacherId());
+        checkinVo.setId(checkin.getId());
+        checkinVo.setMethod(checkin.getMethod());
+        checkinVo.setSource(checkin.getSource());
+        checkinVo.setCourseName(course.getName());
+        checkinVo.setTeacherName(course.getTeacherName());
+        checkinVo.setStartTime(checkin.getStartTime());
+        checkinVo.setEndTime(checkin.getEndTime());
+        long diffInMilliseconds = (checkin.getEndTime().getTime() - checkin.getStartTime().getTime())/1000;
+        redisCache.setCacheObject("checkin:" + checkin.getCourseId(), checkinVo, (int) diffInMilliseconds, TimeUnit.SECONDS);
         return checkinMapper.insertCheckin(checkin);
     }
 
     /**
      * 修改签到信息
-     * 
+     *
      * @param checkin 签到信息
      * @return 结果
      */
     @Override
-    public int updateCheckin(Checkin checkin)
-    {
+    public int updateCheckin(Checkin checkin) {
         checkin.setUpdateTime(DateUtils.getNowDate());
         return checkinMapper.updateCheckin(checkin);
     }
 
     /**
      * 批量删除签到信息
-     * 
+     *
      * @param ids 需要删除的签到信息主键
      * @return 结果
      */
     @Override
-    public int deleteCheckinByIds(String[] ids)
-    {
+    public int deleteCheckinByIds(String[] ids) {
         return checkinMapper.deleteCheckinByIds(ids);
     }
 
     /**
      * 删除签到信息信息
-     * 
+     *
      * @param id 签到信息主键
      * @return 结果
      */
     @Override
-    public int deleteCheckinById(String id)
-    {
+    public int deleteCheckinById(String id) {
         return checkinMapper.deleteCheckinById(id);
     }
 }

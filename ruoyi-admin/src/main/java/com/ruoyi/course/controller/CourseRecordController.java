@@ -50,7 +50,7 @@ public class CourseRecordController extends BaseController {
     /**
      * 查询学生在某个课程中的人数与存在与否 选中取消 未选则选中
      */
-    @PreAuthorize("@ss.hasPermi('course:record:list')")
+//    @PreAuthorize("@ss.hasPermi('course:record:list')")
     @PostMapping("/courseNumStatus")
     public AjaxResult courseNumStatus(@RequestBody CourseNumStatus course) {
         return AjaxResult.success(courseRecordService.getCourseNumStatus(course));

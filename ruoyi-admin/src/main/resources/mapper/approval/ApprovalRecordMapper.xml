@@ -34,12 +34,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null "> and status = #{status}</if>
             <if test="superiorId != null "> and superior_id = #{superiorId}</if>
             <if test="forwardId != null "> and forward_id = #{forwardId}</if>
+             and del_flag = 0
         </where>
     </select>
     
     <select id="selectApprovalRecordById" parameterType="Long" resultMap="ApprovalRecordResult">
         <include refid="selectApprovalRecordVo"/>
-        where id = #{id}
+        where id = #{id} and del_flag = 0
     </select>
         
     <insert id="insertApprovalRecord" parameterType="ApprovalRecord" useGeneratedKeys="true" keyProperty="id">
@@ -94,11 +95,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteApprovalRecordById" parameterType="Long">
-        delete from approval_record where id = #{id}
+        update approval_record set del_flag = 1 where id = #{id}
     </delete>
 
     <delete id="deleteApprovalRecordByIds" parameterType="String">
-        delete from approval_record where id in 
+        update approval_record set del_flag = 1 where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

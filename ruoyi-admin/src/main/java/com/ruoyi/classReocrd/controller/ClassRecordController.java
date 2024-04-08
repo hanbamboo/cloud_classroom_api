@@ -45,7 +45,7 @@ public class ClassRecordController extends BaseController
         List<ClassRecord> list = classRecordService.selectClassRecordList(classRecord);
         return getDataTable(list);
     }
-    @PreAuthorize("@ss.hasPermi('class:record:list')")
+//    @PreAuthorize("@ss.hasPermi('class:record:list')")
     @GetMapping("/app/list")
     public AjaxResult appList(ClassRecord classRecord)
     {

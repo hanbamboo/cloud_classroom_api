@@ -37,12 +37,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="priority != null "> and priority = #{priority}</if>
             <if test="source != null "> and source = #{source}</if>
             <if test="attachments != null  and attachments != ''"> and attachments = #{attachments}</if>
+             and del_flag = 0
         </where>
     </select>
     
     <select id="selectNotificationById" parameterType="Long" resultMap="NotificationResult">
         <include refid="selectNotificationVo"/>
-        where id = #{id}
+        where id = #{id} and del_flag = 0
     </select>
         
     <insert id="insertNotification" parameterType="Notification" useGeneratedKeys="true" keyProperty="id">
@@ -103,11 +104,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteNotificationById" parameterType="Long">
-        delete from notification where id = #{id}
+        update notification set del_flag = 1 where id = #{id}
     </delete>
 
     <delete id="deleteNotificationByIds" parameterType="String">
-        delete from notification where id in 
+        update notification set del_flag = 1 where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
