@@ -38,13 +38,20 @@ public class CourseRecordController extends BaseController {
     /**
      * 查询学生拥有的课程列表
      */
-    @PreAuthorize("@ss.hasPermi('course:record:list')")
+//    @PreAuthorize("@ss.hasPermi('course:record:list')")
     @GetMapping("/list")
     public TableDataInfo list(CourseRecord courseRecord) {
         startPage();
         List<CourseRecord> list = courseRecordService.selectCourseRecordList(courseRecord);
         return getDataTable(list);
     }
+
+    @GetMapping("/app/list")
+    public AjaxResult listApp(CourseRecord courseRecord) {
+        List<CourseRecord> list = courseRecordService.selectCourseRecordList(courseRecord);
+        return AjaxResult.success(list);
+    }
+
 
 
     /**
@@ -72,7 +79,7 @@ public class CourseRecordController extends BaseController {
     /**
      * 获取学生拥有的课程详细信息
      */
-    @PreAuthorize("@ss.hasPermi('course:record:query')")
+//    @PreAuthorize("@ss.hasPermi('course:record:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id) {
         return success(courseRecordService.selectCourseRecordById(id));
@@ -81,7 +88,7 @@ public class CourseRecordController extends BaseController {
     /**
      * 新增学生拥有的课程
      */
-    @PreAuthorize("@ss.hasPermi('course:record:add')")
+//    @PreAuthorize("@ss.hasPermi('course:record:add')")
     @Log(title = "学生拥有的课程", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody CourseRecord courseRecord) {
@@ -91,7 +98,7 @@ public class CourseRecordController extends BaseController {
     /**
      * 根据多个id新增学生拥有的课程
      */
-    @PreAuthorize("@ss.hasPermi('course:record:add')")
+//    @PreAuthorize("@ss.hasPermi('course:record:add')")
     @Log(title = "学生拥有的课程", businessType = BusinessType.INSERT)
     @PostMapping("/addBacth")
     public AjaxResult addWithId(@RequestBody List<CourseRecord> records) {
@@ -101,7 +108,7 @@ public class CourseRecordController extends BaseController {
     /**
      * 修改学生拥有的课程
      */
-    @PreAuthorize("@ss.hasPermi('course:record:edit')")
+//    @PreAuthorize("@ss.hasPermi('course:record:edit')")
     @Log(title = "学生拥有的课程", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody CourseRecord courseRecord) {
@@ -111,7 +118,7 @@ public class CourseRecordController extends BaseController {
     /**
      * 删除学生拥有的课程
      */
-    @PreAuthorize("@ss.hasPermi('course:record:remove')")
+//    @PreAuthorize("@ss.hasPermi('course:record:remove')")
     @Log(title = "学生拥有的课程", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {

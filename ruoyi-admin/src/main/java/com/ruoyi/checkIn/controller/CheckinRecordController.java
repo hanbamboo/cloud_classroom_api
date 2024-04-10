@@ -37,13 +37,20 @@ public class CheckinRecordController extends BaseController
     /**
      * 查询签到明细列表
      */
-    @PreAuthorize("@ss.hasPermi('checkIn:record:list')")
+//    @PreAuthorize("@ss.hasPermi('checkIn:record:list')")
     @GetMapping("/list")
     public TableDataInfo list(CheckinRecord checkinRecord)
     {
         startPage();
         List<CheckinRecord> list = checkinRecordService.selectCheckinRecordList(checkinRecord);
         return getDataTable(list);
+    }
+
+    @GetMapping("/app/list")
+    public AjaxResult listApp(CheckinRecord checkinRecord)
+    {
+        List<CheckinRecord> list = checkinRecordService.selectCheckinRecordList(checkinRecord);
+        return AjaxResult.success(list);
     }
 
     /**
@@ -62,7 +69,7 @@ public class CheckinRecordController extends BaseController
     /**
      * 获取签到明细详细信息
      */
-    @PreAuthorize("@ss.hasPermi('checkIn:record:query')")
+//    @PreAuthorize("@ss.hasPermi('checkIn:record:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -72,7 +79,7 @@ public class CheckinRecordController extends BaseController
     /**
      * 新增签到明细
      */
-    @PreAuthorize("@ss.hasPermi('checkIn:record:add')")
+//    @PreAuthorize("@ss.hasPermi('checkIn:record:add')")
     @Log(title = "签到明细", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody CheckinRecord checkinRecord)
@@ -83,7 +90,7 @@ public class CheckinRecordController extends BaseController
     /**
      * 修改签到明细
      */
-    @PreAuthorize("@ss.hasPermi('checkIn:record:edit')")
+//    @PreAuthorize("@ss.hasPermi('checkIn:record:edit')")
     @Log(title = "签到明细", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody CheckinRecord checkinRecord)
@@ -94,7 +101,7 @@ public class CheckinRecordController extends BaseController
     /**
      * 删除签到明细
      */
-    @PreAuthorize("@ss.hasPermi('checkIn:record:remove')")
+//    @PreAuthorize("@ss.hasPermi('checkIn:record:remove')")
     @Log(title = "签到明细", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

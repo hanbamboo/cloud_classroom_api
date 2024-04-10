@@ -60,7 +60,7 @@ public class CheckinServiceImpl implements ICheckinService {
             courseRecord.setStudentId(checkin.getTeacherId());
             List<CourseRecord> records = courseRecordMapper.selectCourseRecordList(courseRecord);
             for (CourseRecord record : records) {
-                String key = "checkin:" + record.getCourseId();
+                String key = "checkin:" + record.getCourseId() +":info";
                 if (keys.contains(key) && Objects.equals(record.getStudentId(), checkin.getTeacherId())) {
                     Object checkinValue = redisCache.getCacheObject(key);
                     if (checkinValue != null) {
@@ -72,7 +72,7 @@ public class CheckinServiceImpl implements ICheckinService {
             List<Course> courses = courseMapper.selectCourseByTeacherId(checkin.getTeacherId());
             if (courses != null) {
                 for (Course course : courses) {
-                    String key = "checkin:" + course.getId();
+                    String key = "checkin:" + course.getId()+":info";
                     if(keys.contains(key)){
                         Object checkinValue = redisCache.getCacheObject(key);
                         if (checkinValue != null) {
@@ -108,7 +108,7 @@ public class CheckinServiceImpl implements ICheckinService {
     @Override
     public int insertCheckin(Checkin checkin) {
         checkin.setCreateTime(DateUtils.getNowDate());
-        Object data = redisCache.getCacheObject("checkin:" + checkin.getCourseId());
+        Object data = redisCache.getCacheObject("checkin:" + checkin.getCourseId()+":info");
         if (data != null) {
             throw new RuntimeException("当前已存在进行中的签到！请勿重复发布！");
         }
@@ -130,7 +130,12 @@ public class CheckinServiceImpl implements ICheckinService {
         checkinVo.setStartTime(checkin.getStartTime());
         checkinVo.setEndTime(checkin.getEndTime());
         long diffInMilliseconds = (checkin.getEndTime().getTime() - checkin.getStartTime().getTime())/1000;
-        redisCache.setCacheObject("checkin:" + checkin.getCourseId(), checkinVo, (int) diffInMilliseconds, TimeUnit.SECONDS);
+        redisCache.setCacheObject("checkin:" + checkin.getCourseId()+":info", checkinVo, (int) diffInMilliseconds, TimeUnit.SECONDS);
+        CourseRecord courseRecord = new CourseRecord();
+        courseRecord.setCourseId(checkin.getCourseId());
+        List<CourseRecord> records = courseRecordMapper.selectCourseRecordList(courseRecord);
+        redisCache.setCacheObject("checkin:" + checkin.getCourseId()+":student", records, (int) diffInMilliseconds, TimeUnit.SECONDS);
+
         return checkinMapper.insertCheckin(checkin);
     }
 

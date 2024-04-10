@@ -34,12 +34,12 @@ public class WebSocketServer {
 
     private Session session;
     private String identity;
-    private String uid;
 
 
 
     private static final String MSG_TYPE_HEARTBEAT_PING = "heartbeat_ping";
     private static final String MSG_TYPE_HEARTBEAT_PONG = "heartbeat_pong";
+    private static final String MSG_TYPE_CHECKIN_READY = "checkin_ready";
     private static final String MSG_TYPE_SYSTEM = "system";
 
     /**
@@ -51,10 +51,10 @@ public class WebSocketServer {
     @OnOpen
     public void onOpen(Session session, @PathParam("identity") String identity) {
         this.identity = identity;
-
         this.session = session;
+        onlineSessionClientMap.put(identity, session);
         // 创建消息对象
-        WebSocketDTO webSocketDTO = writeMessage(MSG_TYPE_SYSTEM, "success", null);
+        WebSocketDTO webSocketDTO = writeMessage(identity,MSG_TYPE_SYSTEM, "success", session);
         this.sendMessageTo(identity, webSocketDTO);
         System.out.println("WebSocket 建立连接：" + session);
     }
@@ -83,7 +83,6 @@ public class WebSocketServer {
         if (!ObjectUtils.isEmpty(jsonObject) && !ObjectUtils.isEmpty(jsonObject.getString("msgType"))) {
             switch (jsonObject.getString("msgType")) {
                 case MSG_TYPE_HEARTBEAT_PING:
-                    return;
                 case MSG_TYPE_HEARTBEAT_PONG:
                     return;
                 default:
@@ -112,7 +111,23 @@ public class WebSocketServer {
      * @param message  JSON过后的信息内容
      */
     public void sendMessageTo(String identity, Object message) {
-
+        String msg = JSON.toJSONString(message);
+        // 通过uid查询map中是否存在
+        Session toSession = onlineSessionClientMap.get(identity);
+        if (toSession == null) {
+            return;
+        }
+        // 异步发送
+        try {
+            toSession.getAsyncRemote().sendText(msg);
+        }catch (Exception e) {
+            try {
+                Thread.sleep(50);  // 等待50毫秒
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+            toSession.getAsyncRemote().sendText(msg);
+        }
 
     }
 
@@ -144,10 +159,10 @@ public class WebSocketServer {
      * @param message 信息
      * @return webSocketDTO对象
      */
-    public WebSocketDTO writeMessage(String msgType, String message, Session session) {
+    public WebSocketDTO writeMessage(String identity,String msgType, String message, Session session) {
         WebSocketDTO webSocketDTO = new WebSocketDTO();
         if (session == null) {
-            webSocketDTO.setUserId(this.uid);
+            webSocketDTO.setUserId(identity.split("@")[1]);
             webSocketDTO.setSessionId(this.session.getId());
         } else {
             webSocketDTO.setUserId("sysAdmin");
@@ -161,7 +176,7 @@ public class WebSocketServer {
     public void sendHeartbeat() {
         onlineSessionClientMap.forEach((onlineUid, session) -> {
             if (session != null && session.isOpen()) {
-                session.getAsyncRemote().sendText(JSON.toJSONString(writeMessage(MSG_TYPE_HEARTBEAT_PING, "keep living", session)));
+                session.getAsyncRemote().sendText(JSON.toJSONString(writeMessage(onlineUid,MSG_TYPE_HEARTBEAT_PING, "keep living", session)));
             }
         });
     }

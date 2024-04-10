@@ -1,6 +1,9 @@
 package com.ruoyi.course.service.impl;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.course.domain.CourseNumStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,8 @@ public class CourseRecordServiceImpl implements ICourseRecordService
 {
     @Autowired
     private CourseRecordMapper courseRecordMapper;
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 查询学生拥有的课程
@@ -42,7 +47,13 @@ public class CourseRecordServiceImpl implements ICourseRecordService
     @Override
     public List<CourseRecord> selectCourseRecordList(CourseRecord courseRecord)
     {
-        return courseRecordMapper.selectCourseRecordList(courseRecord);
+        List<CourseRecord> courseRecordList = redisCache.getCacheList("checkin:"+courseRecord.getCourseId()+":student");
+        if (courseRecordList!=null&& !courseRecordList.isEmpty()){
+            return courseRecordList;
+        }
+        courseRecordList = courseRecordMapper.selectCourseRecordList(courseRecord);
+        redisCache.setCacheObject("checkin:" + courseRecord.getCourseId()+":student", courseRecordList,  30, TimeUnit.MINUTES);
+        return courseRecordList;
     }
 
     /**
