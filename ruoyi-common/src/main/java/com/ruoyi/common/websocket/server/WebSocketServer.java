@@ -2,21 +2,21 @@ package com.ruoyi.common.websocket.server;
 
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.ruoyi.common.websocket.dto.VideoResolutionDTO;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.websocket.dto.WebSocketDTO;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
-import java.util.Map;
-import java.util.Random;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * websocket 服务端
@@ -26,20 +26,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class WebSocketServer {
 
 
+    @Autowired
+    private RedisCache redisCache;
     /**
      * 存放所有在线的客户端
      */
     private static final Map<String, Session> onlineSessionClientMap = new ConcurrentHashMap<>();
-
+    private static final Map<String, JSONObject> onlineCheckinMap = new ConcurrentHashMap<>();
 
     private Session session;
     private String identity;
 
 
-
     private static final String MSG_TYPE_HEARTBEAT_PING = "heartbeat_ping";
     private static final String MSG_TYPE_HEARTBEAT_PONG = "heartbeat_pong";
-    private static final String MSG_TYPE_CHECKIN_READY = "checkin_ready";
+//    private static final String MSG_TYPE_CHECKIN_READY = "checkin_ready";
+    private static final String MSG_TYPE_CHECKIN_BROADCAST = "checkin_broadcast";
     private static final String MSG_TYPE_SYSTEM = "system";
 
     /**
@@ -54,7 +56,7 @@ public class WebSocketServer {
         this.session = session;
         onlineSessionClientMap.put(identity, session);
         // 创建消息对象
-        WebSocketDTO webSocketDTO = writeMessage(identity,MSG_TYPE_SYSTEM, "success", session);
+        WebSocketDTO webSocketDTO = writeMessage(identity, MSG_TYPE_SYSTEM, "success");
         this.sendMessageTo(identity, webSocketDTO);
         System.out.println("WebSocket 建立连接：" + session);
     }
@@ -67,7 +69,8 @@ public class WebSocketServer {
      */
     @OnClose
     public void onClose(Session session, @PathParam("identity") String identity) {
-
+        onlineSessionClientMap.remove(identity);
+        System.out.println("WebSocket 关闭连接：" + session + " identity:" + identity);
     }
 
 
@@ -78,13 +81,16 @@ public class WebSocketServer {
      */
     @OnMessage
     public void onMessage(String message) {
-        System.out.println("WebSocket 收到消息："+ message);
+        System.out.println("WebSocket 收到消息：" + message);
         JSONObject jsonObject = JSON.parseObject(message);
         if (!ObjectUtils.isEmpty(jsonObject) && !ObjectUtils.isEmpty(jsonObject.getString("msgType"))) {
             switch (jsonObject.getString("msgType")) {
                 case MSG_TYPE_HEARTBEAT_PING:
                 case MSG_TYPE_HEARTBEAT_PONG:
                     return;
+//                case MSG_TYPE_CHECKIN_READY:
+//                    onlineCheckinMap.put(jsonObject.getString("checkId"), jsonObject.getJSONObject("data"));
+//                    return;
                 default:
             }
         }
@@ -117,16 +123,12 @@ public class WebSocketServer {
         if (toSession == null) {
             return;
         }
-        // 异步发送
-        try {
-            toSession.getAsyncRemote().sendText(msg);
-        }catch (Exception e) {
+        synchronized(toSession){
             try {
-                Thread.sleep(50);  // 等待50毫秒
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
+                toSession.getBasicRemote().sendText(msg);
+            }catch (Exception e) {
+                e.printStackTrace();
             }
-            toSession.getAsyncRemote().sendText(msg);
         }
 
     }
@@ -138,16 +140,17 @@ public class WebSocketServer {
      * @param message JSON过后的信息内容
      */
     public void broadcastMessage(String message) {
-        if(this.identity == null){
-            this.identity = JSON.parseObject(message).getString("message");
-            if(this.identity == null){
-                return;
-            }
-        }
         onlineSessionClientMap.forEach((identity, session) -> {
-            // 排除掉自己
-            if (session != null && session.isOpen() && !this.identity.equalsIgnoreCase(identity)) {
-                session.getAsyncRemote().sendText(message);
+            if (session != null && session.isOpen()&&!identity.equals(this.identity)) {
+                try {
+                    synchronized(session){
+                        session.getBasicRemote().sendText(message);
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+//                    throw new RuntimeException(e);
+                }
             }
         });
     }
@@ -159,14 +162,11 @@ public class WebSocketServer {
      * @param message 信息
      * @return webSocketDTO对象
      */
-    public WebSocketDTO writeMessage(String identity,String msgType, String message, Session session) {
+    public WebSocketDTO writeMessage(String identity, String msgType, String message) {
         WebSocketDTO webSocketDTO = new WebSocketDTO();
-        if (session == null) {
-            webSocketDTO.setUserId(identity.split("@")[1]);
+        webSocketDTO.setUserId(identity);
+        if(this.session!=null){
             webSocketDTO.setSessionId(this.session.getId());
-        } else {
-            webSocketDTO.setUserId("sysAdmin");
-            webSocketDTO.setSessionId(session.getId());
         }
         webSocketDTO.setMsgType(msgType);
         webSocketDTO.setMessage(message);
@@ -176,42 +176,21 @@ public class WebSocketServer {
     public void sendHeartbeat() {
         onlineSessionClientMap.forEach((onlineUid, session) -> {
             if (session != null && session.isOpen()) {
-                session.getAsyncRemote().sendText(JSON.toJSONString(writeMessage(onlineUid,MSG_TYPE_HEARTBEAT_PING, "keep living", session)));
-            }
+                synchronized(session){
+                    try {
+                        session.getBasicRemote().sendText(JSON.toJSONString(writeMessage(onlineUid, MSG_TYPE_HEARTBEAT_PING, "keep living")));
+                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+                        e.printStackTrace();
+                    }
+                }}
         });
     }
 
-    /**
-     * 发送消息给指定客户端
-     * 消息示例：
-     * {
-     * 	"msgType": "send_to_client",
-     * 	"targetClientId": "1@9d29819d424c11ee92410242ac140002@1",
-     * 	"message": {
-     * 		"message": "tilted",
-     * 		"msgType": "deviceStatus"
-     *        }
-     * }
-     * @param message
-     */
-    private void sendMsgToClient(JSONObject message) {
-        try {
-             String targetClientId = message.get("targetClientId") == null ? null : message.getString("targetClientId");
-            if (StringUtils.isEmpty(targetClientId)) {
-                return;
-            }
-            Object msg = message.get("message");
-            if (msg == null) {
-                return;
-            }
-            sendMessageTo(targetClientId, msg);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * 通过Id判断客户端是否在线
+     *
      * @param id
      * @return
      */
@@ -223,9 +202,61 @@ public class WebSocketServer {
 
     /**
      * 获取在线用户
+     *
      * @return Map<String, Session> onlineSessionClientMap
      */
     public Map<String, Session> getOnlineSessionClientMap() {
         return onlineSessionClientMap;
+    }
+
+    public void addOnlineCheckinMap(String checkinId, Long courseId,Date endTime) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("list", new ArrayList<>());
+        jsonObject.put("courseId", courseId);
+        jsonObject.put("endTime", endTime);
+        jsonObject.put("msgType",MSG_TYPE_CHECKIN_BROADCAST);
+        onlineCheckinMap.put(checkinId, jsonObject);
+    }
+    public JSONObject addOnlineCheckinMember(String checkinId, Long studentId,Date checkinTime,String userName,String avatar) {
+        JSONObject jsonObject = new JSONObject();
+        if(!onlineCheckinMap.containsKey(checkinId)){
+            jsonObject.put("result", false);
+            jsonObject.put("reason","无法签到！签到时间已过！");
+        }
+        JSONObject onlineCheckin = onlineCheckinMap.get(checkinId);
+        JSONArray list = onlineCheckin.getJSONArray("list");
+        if (list.stream().anyMatch(o -> ((JSONObject) o).getLong("studentId").equals(studentId))) {
+            jsonObject.put("result", false);
+            jsonObject.put("reason","签到失败，请勿重复签到！");
+            return jsonObject;
+        }
+        JSONObject checkinResult = new JSONObject();
+        if(checkinTime.after(onlineCheckin.getDate("endTime"))){
+            checkinResult.put("result",1); // 迟到
+        }else{
+            checkinResult.put("result",0); // 正常
+        }
+        checkinResult.put("studentId", studentId);
+        checkinResult.put("studentName", userName);
+        checkinResult.put("studentAvatar", avatar);
+        boolean result = onlineCheckinMap.get(checkinId).getJSONArray("list").add(checkinResult);
+        jsonObject.put("result", result);
+        if(!result){
+            jsonObject.put("reason","签到失败，请勿重复签到！");
+        }else{
+            jsonObject.put("reason","签到成功！");
+        }
+        return jsonObject;
+    }
+    @Scheduled(fixedRate = 1500)
+    private void checkinMemberListPush() {
+        onlineCheckinMap.forEach((checkinId, checkinJSON) -> {
+            broadcastMessage(checkinJSON.toJSONString());
+            if (redisCache.getCacheObject("checkin:" + checkinJSON.getString("courseId") + ":info")==null) {
+                onlineCheckinMap.remove(checkinId);
+                //签到结束
+            }
+
+        });
     }
 }

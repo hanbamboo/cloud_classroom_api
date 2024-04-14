@@ -1,7 +1,11 @@
 package com.ruoyi.checkIn.service;
 
 import java.util.List;
+
+import com.ruoyi.checkIn.domain.CheckinInsertVo;
 import com.ruoyi.checkIn.domain.CheckinRecord;
+import com.ruoyi.checkIn.domain.CheckinVo;
+import com.ruoyi.common.core.domain.AjaxResult;
 
 /**
  * 签到明细Service接口
@@ -18,6 +22,7 @@ public interface ICheckinRecordService
      * @return 签到明细
      */
     public CheckinRecord selectCheckinRecordById(Long id);
+    public CheckinRecord selectCheckinRecordByCheckinIdAndStudentId(String checkinId,Long studentId);
 
     /**
      * 查询签到明细列表
@@ -26,6 +31,7 @@ public interface ICheckinRecordService
      * @return 签到明细集合
      */
     public List<CheckinRecord> selectCheckinRecordList(CheckinRecord checkinRecord);
+    public List<CheckinRecord> selectCheckinRecordListRecord(CheckinVo checkinVo);
 
     /**
      * 新增签到明细
@@ -34,6 +40,7 @@ public interface ICheckinRecordService
      * @return 结果
      */
     public int insertCheckinRecord(CheckinRecord checkinRecord);
+    public AjaxResult appRecordCheckin(CheckinInsertVo checkinInsertVo);
 
     /**
      * 修改签到明细

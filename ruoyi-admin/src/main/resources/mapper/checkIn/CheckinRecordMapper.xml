@@ -41,7 +41,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectCheckinRecordVo"/>
         where id = #{id} and del_flag = 0
     </select>
-        
+
+    <select id="selectCheckinRecordListRecord" parameterType="CheckinVo" resultMap="CheckinRecordResult">
+        <include refid="selectCheckinRecordVo"/>
+        <where>
+            <if test="checkinId != null  and checkinId != ''"> and checkin_id = #{checkinId}</if>
+            <if test="studentId != null "> and student_id = #{studentId}</if>
+            <if test="checkinTime != null "> and checkin_time = #{checkinTime}</if>
+            and del_flag = 0
+        </where>
+    </select>
+    <select id="selectCheckinRecordByCheckinIdAndStudentId" resultMap="CheckinRecordResult">
+        <include refid="selectCheckinRecordVo"/>
+        where checkin_id = #{checkinId} and student_id = #{studentId} and del_flag = 0 limit 1
+    </select>
+
     <insert id="insertCheckinRecord" parameterType="CheckinRecord" useGeneratedKeys="true" keyProperty="id">
         insert into checkin_record
         <trim prefix="(" suffix=")" suffixOverrides=",">

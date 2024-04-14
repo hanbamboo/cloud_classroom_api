@@ -2,6 +2,7 @@ package com.ruoyi.checkIn.mapper;
 
 import java.util.List;
 import com.ruoyi.checkIn.domain.Checkin;
+import com.ruoyi.checkIn.domain.CheckinHistoryVo;
 import com.ruoyi.checkIn.domain.CheckinVo;
 
 /**
@@ -29,6 +30,7 @@ public interface CheckinMapper
      * @return 签到信息集合
      */
     public List<Checkin> selectCheckinList(Checkin checkin);
+    public List<CheckinHistoryVo> selectCheckinListApp(Checkin checkin);
 
     /**
      * 新增签到信息

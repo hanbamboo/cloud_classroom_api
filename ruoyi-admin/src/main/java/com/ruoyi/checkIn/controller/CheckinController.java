@@ -3,6 +3,7 @@ package com.ruoyi.checkIn.controller;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.checkIn.domain.CheckinHistoryVo;
 import com.ruoyi.checkIn.domain.CheckinVo;
 import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -48,7 +49,13 @@ public class CheckinController extends BaseController
         List<Checkin> list = checkinService.selectCheckinList(checkin);
         return getDataTable(list);
     }
-
+//    @PreAuthorize("@ss.hasPermi('checkIn:checkin:list')")
+    @GetMapping("/app/list")
+    public AjaxResult listApp(Checkin checkin)
+    {
+        List<CheckinHistoryVo> list = checkinService.selectCheckinListApp(checkin);
+        return AjaxResult.success(list);
+    }
     /**
      * 查询当前时间中的签到信息
      */
@@ -58,13 +65,18 @@ public class CheckinController extends BaseController
     {
         CheckinVo checkinData = checkinService.getCurrentCheckin(checkin);
         if(checkinData != null){
-            return AjaxResult.success(checkinService.getCurrentCheckin(checkin)) ;
+            return AjaxResult.success(checkinData) ;
         }else {
             return AjaxResult.success("当前没有签到信息") ;
         }
 
     }
-
+//    @PreAuthorize("@ss.hasPermi('checkIn:checkin:query')")
+    @GetMapping(value = "/{id}")
+    public AjaxResult getInfo(@PathVariable("id") String id)
+    {
+        return success(checkinService.selectCheckinById(id));
+    }
 
     /**
      * 导出签到信息列表
@@ -79,15 +91,6 @@ public class CheckinController extends BaseController
         util.exportExcel(response, list, "签到信息数据");
     }
 
-    /**
-     * 获取签到信息详细信息
-     */
-    @PreAuthorize("@ss.hasPermi('checkIn:checkin:query')")
-    @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") String id)
-    {
-        return success(checkinService.selectCheckinById(id));
-    }
 
     /**
      * 新增签到信息
@@ -97,7 +100,7 @@ public class CheckinController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody Checkin checkin)
     {
-        return toAjax(checkinService.insertCheckin(checkin));
+        return AjaxResult.success(checkinService.insertCheckin(checkin));
     }
 
     /**
@@ -114,7 +117,7 @@ public class CheckinController extends BaseController
     /**
      * 删除签到信息
      */
-    @PreAuthorize("@ss.hasPermi('checkIn:checkin:remove')")
+//    @PreAuthorize("@ss.hasPermi('checkIn:checkin:remove')")
     @Log(title = "签到信息", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids)

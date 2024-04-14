@@ -2,6 +2,9 @@ package com.ruoyi.checkIn.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.checkIn.domain.CheckinInsertVo;
+import com.ruoyi.checkIn.domain.CheckinVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,6 +56,26 @@ public class CheckinRecordController extends BaseController
         return AjaxResult.success(list);
     }
 
+    @GetMapping("/app/record")
+    public AjaxResult appRecord(CheckinVo checkinVo)
+    {
+        List<CheckinRecord> list = checkinRecordService.selectCheckinRecordListRecord(checkinVo);
+        return AjaxResult.success(list);
+    }
+
+    @GetMapping("/app/history/{id}")
+    public AjaxResult listAppHistory(CheckinVo checkinVo)
+    {
+        List<CheckinRecord> list = checkinRecordService.selectCheckinRecordListRecord(checkinVo);
+        return AjaxResult.success(list);
+    }
+
+    @PostMapping("/app/checkin")
+    public AjaxResult appRecordCheckin(@RequestBody CheckinInsertVo checkinInsertVo)
+    {
+        return checkinRecordService.appRecordCheckin(checkinInsertVo);
+    }
+
     /**
      * 导出签到明细列表
      */
@@ -64,6 +87,12 @@ public class CheckinRecordController extends BaseController
         List<CheckinRecord> list = checkinRecordService.selectCheckinRecordList(checkinRecord);
         ExcelUtil<CheckinRecord> util = new ExcelUtil<CheckinRecord>(CheckinRecord.class);
         util.exportExcel(response, list, "签到明细数据");
+    }
+
+    @GetMapping(value = "/{checkinId}/{studentId}")
+    public AjaxResult getInfo(@PathVariable("checkinId") String checkinId, @PathVariable("studentId") Long studentId)
+    {
+        return success(checkinRecordService.selectCheckinRecordByCheckinIdAndStudentId(checkinId,studentId));
     }
 
     /**

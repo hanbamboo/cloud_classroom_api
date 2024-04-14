@@ -1,11 +1,13 @@
 package com.ruoyi.course.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.course.domain.CourseNumStatus;
+import com.ruoyi.course.domain.CourseRecordDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.course.mapper.CourseRecordMapper;
@@ -47,12 +49,27 @@ public class CourseRecordServiceImpl implements ICourseRecordService
     @Override
     public List<CourseRecord> selectCourseRecordList(CourseRecord courseRecord)
     {
-        List<CourseRecord> courseRecordList = redisCache.getCacheList("checkin:"+courseRecord.getCourseId()+":student");
-        if (courseRecordList!=null&& !courseRecordList.isEmpty()){
-            return courseRecordList;
+       return courseRecordMapper.selectCourseRecordList(courseRecord);
+
+    }
+
+    @Override
+    public List<CourseRecord> selectCourseRecordListApp(CourseRecord courseRecord) {
+        return courseRecordMapper.selectCourseRecordListApp(courseRecord);
+    }
+
+    @Override
+    public List<CourseRecordDTO> selectCourseRecordCheckinStudent(CourseRecord courseRecord) {
+        Object o = redisCache.getCacheObject("checkin:"+courseRecord.getCourseId()+":student");
+        List<CourseRecordDTO> courseRecordList = new ArrayList<>();
+        if(o!=null){
+            courseRecordList = (List<CourseRecordDTO>) o;
+            if (!courseRecordList.isEmpty()){
+                return courseRecordList;
+            }
         }
-        courseRecordList = courseRecordMapper.selectCourseRecordList(courseRecord);
-        redisCache.setCacheObject("checkin:" + courseRecord.getCourseId()+":student", courseRecordList,  30, TimeUnit.MINUTES);
+        courseRecordList = courseRecordMapper.selectCourseRecordCheckinStudent(courseRecord);
+        redisCache.setCacheObject("checkin:" + courseRecord.getCourseId()+":student", courseRecordList,  35, TimeUnit.MINUTES);
         return courseRecordList;
     }
 

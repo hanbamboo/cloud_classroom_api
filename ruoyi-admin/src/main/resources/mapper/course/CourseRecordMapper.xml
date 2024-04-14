@@ -14,6 +14,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="delFlag"    column="del_flag"    />
     </resultMap>
+    <resultMap type="CourseRecordDTO" id="CourseRecordResultDTO">
+        <result property="studentId"    column="student_id"    />
+        <result property="studentName"    column="student_name"    />
+        <result property="studentAvatar"    column="student_avatar"    />
+    </resultMap>
     <resultMap type="CourseNumStatus" id="CourseRecordHasResult">
         <result property="id"    column="id"    />
         <result property="studentId"    column="student_id"    />
@@ -23,21 +28,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectCourseRecordVo">
-        select id, student_id, course_id, create_by, create_time, update_by, update_time, del_flag from course_record
+        select cr.id,
+               cr.student_id,
+               cr.course_id,
+               cr.create_by,
+               cr.create_time,
+               cr.update_by,
+               cr.update_time,
+               cr.del_flag,
+               su.nick_name as student_name
+        from course_record cr
+        left join sys_user su on cr.student_id = su.user_id
     </sql>
 
     <select id="selectCourseRecordList" parameterType="CourseRecord" resultMap="CourseRecordResult">
         <include refid="selectCourseRecordVo"/>
         <where>  
-            <if test="studentId != null "> and student_id = #{studentId}</if>
-            <if test="courseId != null "> and course_id = #{courseId}</if>
-             and del_flag = 0
+            <if test="studentId != null "> and cr.student_id = #{studentId}</if>
+            <if test="courseId != null "> and cr.course_id = #{courseId}</if>
+             and cr.del_flag = 0
         </where>
     </select>
     
     <select id="selectCourseRecordById" parameterType="Long" resultMap="CourseRecordResult">
         <include refid="selectCourseRecordVo"/>
-        where id = #{id}
+        where cr.id = #{id}
     </select>
     <select id="getCourseStudentNumber" resultMap="CourseRecordHasResult" parameterType="CourseNumStatus">
         SELECT
@@ -51,7 +66,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM course_record
         where course_id = #{courseId} and del_flag = 0
     </select>
-
+    <select id="selectCourseRecordListApp" parameterType="CourseRecord" resultMap="CourseRecordResult" >
+        <include refid="selectCourseRecordVo"/>
+        <where>
+            <if test="studentId != null ">and cr.student_id = #{studentId}</if>
+            <if test="courseId != null ">and cr.course_id = #{courseId}</if>
+            and cr.del_flag = 0
+        </where>
+    </select>
+    <select id="selectCourseRecordCheckinStudent" parameterType="CourseRecord" resultMap="CourseRecordResultDTO" >
+        select
+        cr.student_id,
+        su.nick_name as student_name,
+        su.avatar as student_avatar
+        from course_record cr
+        left join sys_user su on cr.student_id = su.user_id
+        left join sys_user_role sur on su.user_id = sur.user_id
+        <where>
+            <if test="studentId != null ">and cr.student_id = #{studentId}</if>
+            <if test="courseId != null ">and cr.course_id = #{courseId}</if>
+            and cr.del_flag = 0 and sur.role_id = 100
+        </where>
+    </select>
     <insert id="insertCourseRecord" parameterType="CourseRecord" useGeneratedKeys="true" keyProperty="id">
         insert into course_record
         <trim prefix="(" suffix=")" suffixOverrides=",">

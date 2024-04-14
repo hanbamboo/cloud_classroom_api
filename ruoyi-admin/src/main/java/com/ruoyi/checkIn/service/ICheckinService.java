@@ -2,7 +2,9 @@ package com.ruoyi.checkIn.service;
 
 import java.util.List;
 import com.ruoyi.checkIn.domain.Checkin;
+import com.ruoyi.checkIn.domain.CheckinHistoryVo;
 import com.ruoyi.checkIn.domain.CheckinVo;
+import com.ruoyi.common.core.domain.AjaxResult;
 
 /**
  * 签到信息Service接口
@@ -33,6 +35,7 @@ public interface ICheckinService
      * @return 签到信息集合
      */
     public List<Checkin> selectCheckinList(Checkin checkin);
+    public List<CheckinHistoryVo> selectCheckinListApp(Checkin checkin);
 
     /**
      * 新增签到信息
@@ -40,7 +43,7 @@ public interface ICheckinService
      * @param checkin 签到信息
      * @return 结果
      */
-    public int insertCheckin(Checkin checkin);
+    public AjaxResult insertCheckin(Checkin checkin);
 
     /**
      * 修改签到信息

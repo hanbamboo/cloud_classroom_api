@@ -1,42 +1,67 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.checkIn.mapper.CheckinMapper">
-    
+
     <resultMap type="Checkin" id="CheckinResult">
-        <result property="id"    column="id"    />
-        <result property="courseId"    column="course_id"    />
-        <result property="teacherId"    column="teacher_id"    />
-        <result property="startTime"    column="start_time"    />
-        <result property="endTime"    column="end_time"    />
-        <result property="method"    column="method"    />
-        <result property="source"    column="source"    />
-        <result property="createBy"    column="create_by"    />
-        <result property="createTime"    column="create_time"    />
-        <result property="updateBy"    column="update_by"    />
-        <result property="updateTime"    column="update_time"    />
-        <result property="delFlag"    column="del_flag"    />
-        <result property="remark"    column="remark"    />
+        <result property="id" column="id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="teacherId" column="teacher_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="method" column="method"/>
+        <result property="source" column="source"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+    <resultMap type="CheckinHistoryVo" id="CheckinResultHistoryVo">
+        <result property="checkinId" column="checkin_id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="courseName" column="course_name"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="method" column="method"/>
+        <result property="source" column="source"/>
+        <result property="courseCountTotal" column="course_count_total"/>
+        <result property="courseCountPeople" column="course_count_people"/>
+        <result property="courseCountOut" column="course_count_out"/>
+        <result property="remark" column="remark"/>
     </resultMap>
 
     <sql id="selectCheckinVo">
-        select id, course_id, teacher_id, start_time, end_time, method, source, create_by, create_time, update_by, update_time, del_flag, remark from checkin
+        select id,
+               course_id,
+               teacher_id,
+               start_time,
+               end_time,
+               method,
+               source,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               del_flag,
+               remark
+        from checkin
     </sql>
 
     <select id="selectCheckinList" parameterType="Checkin" resultMap="CheckinResult">
         <include refid="selectCheckinVo"/>
-        <where>  
-            <if test="courseId != null "> and course_id = #{courseId}</if>
-            <if test="teacherId != null "> and teacher_id = #{teacherId}</if>
-            <if test="startTime != null "> and start_time = #{startTime}</if>
-            <if test="endTime != null "> and end_time = #{endTime}</if>
-            <if test="method != null "> and method = #{method}</if>
-            <if test="source != null  and source != ''"> and source = #{source}</if>
-             and del_flag = 0
+        <where>
+            <if test="courseId != null ">and course_id = #{courseId}</if>
+            <if test="teacherId != null ">and teacher_id = #{teacherId}</if>
+            <if test="startTime != null ">and start_time = #{startTime}</if>
+            <if test="endTime != null ">and end_time = #{endTime}</if>
+            <if test="method != null ">and method = #{method}</if>
+            and del_flag = 0
         </where>
     </select>
-    
+
     <select id="selectCheckinById" parameterType="String" resultMap="CheckinResult">
         <include refid="selectCheckinVo"/>
         where id = #{id} and del_flag = 0
@@ -44,15 +69,49 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="getCurrentCheckin" resultMap="CheckinResult">
         <include refid="selectCheckinVo"/>
         <where>
-            <if test="courseId != null "> and course_id = #{courseId}</if>
-            <if test="teacherId != null "> and teacher_id = #{teacherId}</if>
+            <if test="courseId != null ">and course_id = #{courseId}</if>
+            <if test="teacherId != null ">and teacher_id = #{teacherId}</if>
             and del_flag = 0
-            and (NOW() BETWEEN start_time AND end_time)
+            and (NOW() BETWEEN start_time AND DATE_ADD(end_time, INTERVAL 5 MINUTE))
         </where>
     </select>
     <select id="getCurrentCheckinStudent" resultMap="CheckinResult">
-        select id, course_id, teacher_id, start_time, end_time, method, source, create_by, create_time, update_by, update_time, del_flag, remark from checkin
+        select id,
+               course_id,
+               teacher_id,
+               start_time,
+               end_time,
+               method,
+               source,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               del_flag,
+               remark
+        from checkin
 
+    </select>
+    <select id="selectCheckinListApp" resultMap="CheckinResultHistoryVo">
+        SELECT
+            ci.id AS checkin_id,
+            ci.course_id,
+            c.NAME as course_name,
+            ci.start_time,
+            ci.end_time,
+            ci.method,
+            ci.source,
+            ci.remark,
+            ( SELECT COUNT( 1 ) FROM course_record cr1 WHERE ci.teacher_id = #{teacherId} AND cr1.course_id = ci.course_id ) AS course_count_total,
+            ( SELECT COUNT( 1 ) FROM checkin_record cr2 WHERE c.teacher_id = 1001 AND cr2.checkin_id = ci.id and cr2.`status` = 1) AS course_count_people ,
+            ( SELECT COUNT( 1 ) FROM checkin_record cr3 WHERE c.teacher_id = 1001 AND cr3.checkin_id = ci.id and cr3.`status` = 2 ) AS course_count_out
+        FROM
+            checkin ci
+        LEFT JOIN course c ON c.id = ci.course_id
+        WHERE
+            ci.teacher_id =  #{teacherId} and ci.del_flag = 0
+        ORDER BY
+            ci.create_time DESC
     </select>
 
     <insert id="insertCheckin" parameterType="Checkin">
@@ -71,7 +130,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
             <if test="delFlag != null">del_flag,</if>
             <if test="remark != null">remark,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
             <if test="courseId != null">#{courseId},</if>
@@ -86,7 +145,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime},</if>
             <if test="delFlag != null">#{delFlag},</if>
             <if test="remark != null">#{remark},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateCheckin" parameterType="Checkin">
@@ -109,7 +168,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </update>
 
     <delete id="deleteCheckinById" parameterType="String">
-        update checkin set del_flag = 1 where id = #{id}
+        update checkin
+        set del_flag = 1
+        where id = #{id}
     </delete>
 
     <delete id="deleteCheckinByIds" parameterType="String">

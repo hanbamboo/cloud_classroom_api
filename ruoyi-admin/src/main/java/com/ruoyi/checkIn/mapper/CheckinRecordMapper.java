@@ -2,6 +2,8 @@ package com.ruoyi.checkIn.mapper;
 
 import java.util.List;
 import com.ruoyi.checkIn.domain.CheckinRecord;
+import com.ruoyi.checkIn.domain.CheckinVo;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 签到明细Mapper接口
@@ -18,6 +20,7 @@ public interface CheckinRecordMapper
      * @return 签到明细
      */
     public CheckinRecord selectCheckinRecordById(Long id);
+    public CheckinRecord selectCheckinRecordByCheckinIdAndStudentId(@Param("checkinId") String checkinId, @Param("studentId") Long studentId);
 
     /**
      * 查询签到明细列表
@@ -26,6 +29,7 @@ public interface CheckinRecordMapper
      * @return 签到明细集合
      */
     public List<CheckinRecord> selectCheckinRecordList(CheckinRecord checkinRecord);
+    public List<CheckinRecord> selectCheckinRecordListRecord(CheckinVo checkinVo);
 
     /**
      * 新增签到明细

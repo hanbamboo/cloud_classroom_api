@@ -13,6 +13,8 @@ public class CheckinVo {
     private Long courseId;
     private String courseName;
 
+    private Long studentId;
+
     private Long teacherId;
     private String teacherName;
 

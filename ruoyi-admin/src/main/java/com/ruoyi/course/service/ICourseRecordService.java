@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ruoyi.course.domain.CourseNumStatus;
 import com.ruoyi.course.domain.CourseRecord;
+import com.ruoyi.course.domain.CourseRecordDTO;
 
 /**
  * 学生拥有的课程Service接口
@@ -28,6 +29,8 @@ public interface ICourseRecordService
      * @return 学生拥有的课程集合
      */
     public List<CourseRecord> selectCourseRecordList(CourseRecord courseRecord);
+    public List<CourseRecord> selectCourseRecordListApp(CourseRecord courseRecord);
+    public List<CourseRecordDTO> selectCourseRecordCheckinStudent(CourseRecord courseRecord);
 
     /**
      * 新增学生拥有的课程

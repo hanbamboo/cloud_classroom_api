@@ -4,6 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.course.domain.CourseNumStatus;
+import com.ruoyi.course.domain.CourseRecordDTO;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,11 +49,15 @@ public class CourseRecordController extends BaseController {
 
     @GetMapping("/app/list")
     public AjaxResult listApp(CourseRecord courseRecord) {
-        List<CourseRecord> list = courseRecordService.selectCourseRecordList(courseRecord);
+        List<CourseRecord> list = courseRecordService.selectCourseRecordListApp(courseRecord);
         return AjaxResult.success(list);
     }
 
-
+    @GetMapping("/app/checkin")
+    public AjaxResult listAppCheckin(CourseRecord courseRecord) {
+        List<CourseRecordDTO> list = courseRecordService.selectCourseRecordCheckinStudent(courseRecord);
+        return AjaxResult.success(list);
+    }
 
     /**
      * 查询学生在某个课程中的人数与存在与否 选中取消 未选则选中
