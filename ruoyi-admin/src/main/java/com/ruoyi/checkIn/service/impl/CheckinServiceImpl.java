@@ -174,6 +174,12 @@ public class CheckinServiceImpl implements ICheckinService {
         return checkinMapper.updateCheckin(checkin);
     }
 
+    @Override
+    public int cancleCheckin(Checkin checkin) {
+        redisCache.deleteObject("checkin:" + checkin.getCourseId() + ":student");
+        return redisCache.deleteObject("checkin:" + checkin.getCourseId() + ":info") ? 1 : 0;
+    }
+
     /**
      * 批量删除签到信息
      *

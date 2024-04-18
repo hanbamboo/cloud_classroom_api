@@ -37,7 +37,7 @@ public class ApproverController extends BaseController
     /**
      * 查询审批人管理列表
      */
-    @PreAuthorize("@ss.hasPermi('approver:approver:list')")
+//    @PreAuthorize("@ss.hasPermi('approver:approver:list')")
     @GetMapping("/list")
     public TableDataInfo list(Approver approver)
     {
@@ -62,7 +62,7 @@ public class ApproverController extends BaseController
     /**
      * 获取审批人管理详细信息
      */
-    @PreAuthorize("@ss.hasPermi('approver:approver:query')")
+//    @PreAuthorize("@ss.hasPermi('approver:approver:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -72,7 +72,7 @@ public class ApproverController extends BaseController
     /**
      * 新增审批人管理
      */
-    @PreAuthorize("@ss.hasPermi('approver:approver:add')")
+//    @PreAuthorize("@ss.hasPermi('approver:approver:add')")
     @Log(title = "审批人管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Approver approver)
@@ -83,7 +83,7 @@ public class ApproverController extends BaseController
     /**
      * 修改审批人管理
      */
-    @PreAuthorize("@ss.hasPermi('approver:approver:edit')")
+//    @PreAuthorize("@ss.hasPermi('approver:approver:edit')")
     @Log(title = "审批人管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody Approver approver)
@@ -94,7 +94,7 @@ public class ApproverController extends BaseController
     /**
      * 删除审批人管理
      */
-    @PreAuthorize("@ss.hasPermi('approver:approver:remove')")
+//    @PreAuthorize("@ss.hasPermi('approver:approver:remove')")
     @Log(title = "审批人管理", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

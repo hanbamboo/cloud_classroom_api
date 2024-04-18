@@ -52,6 +52,7 @@ public interface ICheckinService
      * @return 结果
      */
     public int updateCheckin(Checkin checkin);
+    public int cancleCheckin(Checkin checkin);
 
     /**
      * 批量删除签到信息

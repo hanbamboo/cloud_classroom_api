@@ -56,6 +56,13 @@ public class CheckinController extends BaseController
         List<CheckinHistoryVo> list = checkinService.selectCheckinListApp(checkin);
         return AjaxResult.success(list);
     }
+
+    @GetMapping("/app/checkin/cancle")
+    public AjaxResult cancleCheckin(Checkin checkin)
+    {
+        return toAjax(checkinService.cancleCheckin(checkin));
+    }
+
     /**
      * 查询当前时间中的签到信息
      */
@@ -100,7 +107,7 @@ public class CheckinController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody Checkin checkin)
     {
-        return AjaxResult.success(checkinService.insertCheckin(checkin));
+        return checkinService.insertCheckin(checkin);
     }
 
     /**
