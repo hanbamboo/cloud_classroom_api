@@ -72,7 +72,7 @@ public class LeaveApplicationController extends BaseController
     /**
      * 新增学生请假信息
      */
-    @PreAuthorize("@ss.hasPermi('leaveApplication:leave:add')")
+//    @PreAuthorize("@ss.hasPermi('leaveApplication:leave:add')")
     @Log(title = "学生请假信息", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody LeaveApplication leaveApplication)

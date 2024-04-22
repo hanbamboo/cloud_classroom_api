@@ -26,6 +26,7 @@ public interface ApprovalRecordMapper
      * @return 审批结果集合
      */
     public List<ApprovalRecord> selectApprovalRecordList(ApprovalRecord approvalRecord);
+    public List<ApprovalRecord> getApprovalRecordApp(ApprovalRecord approvalRecord);
 
     /**
      * 新增审批结果
@@ -34,6 +35,7 @@ public interface ApprovalRecordMapper
      * @return 结果
      */
     public int insertApprovalRecord(ApprovalRecord approvalRecord);
+    public Long getApprovalRecordNumById(Long id);
 
     /**
      * 修改审批结果

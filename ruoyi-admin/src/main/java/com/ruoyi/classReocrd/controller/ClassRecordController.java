@@ -69,7 +69,7 @@ public class ClassRecordController extends BaseController
     /**
      * 获取班级表详细信息
      */
-    @PreAuthorize("@ss.hasPermi('class:record:query')")
+//    @PreAuthorize("@ss.hasPermi('class:record:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -79,7 +79,7 @@ public class ClassRecordController extends BaseController
     /**
      * 新增班级表
      */
-    @PreAuthorize("@ss.hasPermi('class:record:add')")
+//    @PreAuthorize("@ss.hasPermi('class:record:add')")
     @Log(title = "班级表", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody ClassRecord classRecord)
@@ -90,7 +90,7 @@ public class ClassRecordController extends BaseController
     /**
      * 修改班级表
      */
-    @PreAuthorize("@ss.hasPermi('class:record:edit')")
+//    @PreAuthorize("@ss.hasPermi('class:record:edit')")
     @Log(title = "班级表", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody ClassRecord classRecord)
@@ -101,7 +101,7 @@ public class ClassRecordController extends BaseController
     /**
      * 删除班级表
      */
-    @PreAuthorize("@ss.hasPermi('class:record:remove')")
+//    @PreAuthorize("@ss.hasPermi('class:record:remove')")
     @Log(title = "班级表", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

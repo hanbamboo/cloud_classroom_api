@@ -37,7 +37,7 @@ public class ApprovalRecordController extends BaseController
     /**
      * 查询审批结果列表
      */
-    @PreAuthorize("@ss.hasPermi('approval:record:list')")
+//    @PreAuthorize("@ss.hasPermi('approval:record:list')")
     @GetMapping("/list")
     public TableDataInfo list(ApprovalRecord approvalRecord)
     {
@@ -62,11 +62,23 @@ public class ApprovalRecordController extends BaseController
     /**
      * 获取审批结果详细信息
      */
-    @PreAuthorize("@ss.hasPermi('approval:record:query')")
+//    @PreAuthorize("@ss.hasPermi('approval:record:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return success(approvalRecordService.selectApprovalRecordById(id));
+    }
+
+    @GetMapping(value = "/num/{id}")
+    public AjaxResult getApprovalRecordNumById(@PathVariable("id") Long id)
+    {
+        return AjaxResult.success("操作成功！",approvalRecordService.getApprovalRecordNumById(id));
+    }
+
+    @GetMapping(value = "/app/get")
+    public AjaxResult getApprovalRecordApp(ApprovalRecord approvalRecord)
+    {
+        return AjaxResult.success(approvalRecordService.getApprovalRecordApp(approvalRecord));
     }
 
     /**
@@ -83,7 +95,7 @@ public class ApprovalRecordController extends BaseController
     /**
      * 修改审批结果
      */
-    @PreAuthorize("@ss.hasPermi('approval:record:edit')")
+//    @PreAuthorize("@ss.hasPermi('approval:record:edit')")
     @Log(title = "审批结果", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody ApprovalRecord approvalRecord)
@@ -94,7 +106,7 @@ public class ApprovalRecordController extends BaseController
     /**
      * 删除审批结果
      */
-    @PreAuthorize("@ss.hasPermi('approval:record:remove')")
+//    @PreAuthorize("@ss.hasPermi('approval:record:remove')")
     @Log(title = "审批结果", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

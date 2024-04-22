@@ -1,6 +1,8 @@
 package com.ruoyi.leaveApplication.domain;
 
 import java.util.Date;
+
+import com.alibaba.fastjson2.JSONArray;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -18,7 +20,7 @@ public class LeaveApplication extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** $column.columnComment */
-    private Long id;
+    private String id;
 
     /** 审批人id */
     @Excel(name = "审批人id")
@@ -45,6 +47,7 @@ public class LeaveApplication extends BaseEntity
     /** 理由 */
     @Excel(name = "理由")
     private String reason;
+    private JSONArray approver;
 
     /** 申请时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -58,12 +61,12 @@ public class LeaveApplication extends BaseEntity
     /** $column.columnComment */
     private Long delFlag;
 
-    public void setId(Long id) 
+    public void setId(String id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public String getId()
     {
         return id;
     }
@@ -72,7 +75,15 @@ public class LeaveApplication extends BaseEntity
         this.approverId = approverId;
     }
 
-    public Long getApproverId() 
+    public JSONArray getApprover() {
+        return approver;
+    }
+
+    public void setApprover(JSONArray approver) {
+        this.approver = approver;
+    }
+
+    public Long getApproverId()
     {
         return approverId;
     }

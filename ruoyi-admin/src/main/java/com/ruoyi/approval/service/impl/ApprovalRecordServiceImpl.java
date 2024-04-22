@@ -44,6 +44,11 @@ public class ApprovalRecordServiceImpl implements IApprovalRecordService
         return approvalRecordMapper.selectApprovalRecordList(approvalRecord);
     }
 
+    @Override
+    public List<ApprovalRecord> getApprovalRecordApp(ApprovalRecord approvalRecord) {
+        return approvalRecordMapper.getApprovalRecordApp(approvalRecord);
+    }
+
     /**
      * 新增审批结果
      * 
@@ -55,6 +60,11 @@ public class ApprovalRecordServiceImpl implements IApprovalRecordService
     {
         approvalRecord.setCreateTime(DateUtils.getNowDate());
         return approvalRecordMapper.insertApprovalRecord(approvalRecord);
+    }
+
+    @Override
+    public Long getApprovalRecordNumById(Long id) {
+        return approvalRecordMapper.getApprovalRecordNumById(id);
     }
 
     /**
