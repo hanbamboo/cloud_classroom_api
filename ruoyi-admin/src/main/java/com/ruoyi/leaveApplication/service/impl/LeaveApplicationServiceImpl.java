@@ -9,6 +9,7 @@ import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.approval.domain.ApprovalRecord;
 import com.ruoyi.approval.mapper.ApprovalRecordMapper;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.uuid.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -83,12 +84,11 @@ public class LeaveApplicationServiceImpl implements ILeaveApplicationService
                        Map<String,Object> forwardMap =  (Map<String, Object>) approver.get(i+1);
                        approvalRecord.setForwardId(Long.parseLong(String.valueOf(forwardMap.get("id"))));
                    }else if (i != approver.size() - 1){
-
                         Map<String,Object> superiorMap =  (Map<String, Object>) approver.get(i-1);
                         Map<String,Object> forwardMap =  (Map<String, Object>) approver.get(i+1);
                         approvalRecord.setSuperiorId(Long.parseLong(String.valueOf(superiorMap.get("id"))));
                         approvalRecord.setForwardId(Long.parseLong(String.valueOf(forwardMap.get("id"))));
-                    }else if (i == approver.size()-1){
+                    }else if (i == approver.size()-1&&!leaveApplication.getStudentId().equals(SecurityUtils.getUserId())){
                         Map<String,Object> superiorMap =  (Map<String, Object>) approver.get(i-1);
                         approvalRecord.setSuperiorId(Long.parseLong(String.valueOf(superiorMap.get("id"))));
                     }
@@ -111,6 +111,7 @@ public class LeaveApplicationServiceImpl implements ILeaveApplicationService
     public int updateLeaveApplication(LeaveApplication leaveApplication)
     {
         leaveApplication.setUpdateTime(DateUtils.getNowDate());
+        leaveApplication.setUpdateBy(SecurityUtils.getUsername());
         return leaveApplicationMapper.updateLeaveApplication(leaveApplication);
     }
 

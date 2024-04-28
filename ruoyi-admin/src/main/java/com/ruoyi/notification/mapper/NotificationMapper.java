@@ -2,6 +2,7 @@ package com.ruoyi.notification.mapper;
 
 import java.util.List;
 import com.ruoyi.notification.domain.Notification;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 课堂通知Mapper接口
@@ -34,10 +35,11 @@ public interface NotificationMapper
      * @return 结果
      */
     public int insertNotification(Notification notification);
+    public List<Notification> getNotificationListByRecipientId(@Param("recipientId") String recipientId);
 
     /**
      * 修改课堂通知
-     * 
+     *
      * @param notification 课堂通知
      * @return 结果
      */

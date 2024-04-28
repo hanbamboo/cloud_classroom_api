@@ -51,13 +51,19 @@ public class CourseServiceImpl implements ICourseService {
     public List<CourseDTO> selectCourseListApp(CourseDTO course) {
         List<CourseDTO> courses = courseMapper.selectCourseListApp(course);
         CourseNumStatus courseNumStatus = new CourseNumStatus();
-        courseNumStatus.setStudentId(course.getStudentId());
-        courses.forEach(item -> {
-            courseNumStatus.setCourseId(item.getId());
+        courseNumStatus.setStudentId(course.getTeacherId());
+        for (CourseDTO cours : courses) {
+            courseNumStatus.setCourseId(cours.getId());
             CourseNumStatus res = courseRecordMapper.getCourseStudentNumber(courseNumStatus);
-           item.setSelected(res.getSelectNum());
-           item.setExists(res.getExists());
-        });
+            if(res!=null){
+                cours.setSelected(res.getSelectNum());
+                cours.setExists(res.getExists());
+            }else{
+                cours.setSelected(0);
+                cours.setExists("no");
+            }
+
+        }
         return courses;
     }
 

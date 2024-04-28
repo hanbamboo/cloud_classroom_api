@@ -34,6 +34,7 @@ public interface INotificationService
      * @return 结果
      */
     public int insertNotification(Notification notification);
+    public Long getNotificationNum(Notification notification);
 
     /**
      * 修改课堂通知

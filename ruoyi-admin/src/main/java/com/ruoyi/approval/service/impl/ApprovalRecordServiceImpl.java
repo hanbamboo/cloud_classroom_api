@@ -2,6 +2,7 @@ package com.ruoyi.approval.service.impl;
 
 import java.util.List;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.approval.mapper.ApprovalRecordMapper;
@@ -59,6 +60,7 @@ public class ApprovalRecordServiceImpl implements IApprovalRecordService
     public int insertApprovalRecord(ApprovalRecord approvalRecord)
     {
         approvalRecord.setCreateTime(DateUtils.getNowDate());
+        approvalRecord.setCreateBy(SecurityUtils.getUsername());
         return approvalRecordMapper.insertApprovalRecord(approvalRecord);
     }
 
@@ -77,6 +79,7 @@ public class ApprovalRecordServiceImpl implements IApprovalRecordService
     public int updateApprovalRecord(ApprovalRecord approvalRecord)
     {
         approvalRecord.setUpdateTime(DateUtils.getNowDate());
+        approvalRecord.setUpdateBy(SecurityUtils.getUsername());
         return approvalRecordMapper.updateApprovalRecord(approvalRecord);
     }
 

@@ -84,7 +84,7 @@ public class ApprovalRecordController extends BaseController
     /**
      * 新增审批结果
      */
-    @PreAuthorize("@ss.hasPermi('approval:record:add')")
+//    @PreAuthorize("@ss.hasPermi('approval:record:add')")
     @Log(title = "审批结果", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody ApprovalRecord approvalRecord)

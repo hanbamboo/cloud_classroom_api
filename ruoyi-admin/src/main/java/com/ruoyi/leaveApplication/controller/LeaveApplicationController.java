@@ -37,7 +37,7 @@ public class LeaveApplicationController extends BaseController
     /**
      * 查询学生请假信息列表
      */
-    @PreAuthorize("@ss.hasPermi('leaveApplication:leave:list')")
+//    @PreAuthorize("@ss.hasPermi('leaveApplication:leave:list')")
     @GetMapping("/list")
     public TableDataInfo list(LeaveApplication leaveApplication)
     {
@@ -62,7 +62,7 @@ public class LeaveApplicationController extends BaseController
     /**
      * 获取学生请假信息详细信息
      */
-    @PreAuthorize("@ss.hasPermi('leaveApplication:leave:query')")
+//    @PreAuthorize("@ss.hasPermi('leaveApplication:leave:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -83,7 +83,7 @@ public class LeaveApplicationController extends BaseController
     /**
      * 修改学生请假信息
      */
-    @PreAuthorize("@ss.hasPermi('leaveApplication:leave:edit')")
+//    @PreAuthorize("@ss.hasPermi('leaveApplication:leave:edit')")
     @Log(title = "学生请假信息", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody LeaveApplication leaveApplication)
@@ -94,7 +94,7 @@ public class LeaveApplicationController extends BaseController
     /**
      * 删除学生请假信息
      */
-    @PreAuthorize("@ss.hasPermi('leaveApplication:leave:remove')")
+//    @PreAuthorize("@ss.hasPermi('leaveApplication:leave:remove')")
     @Log(title = "学生请假信息", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)

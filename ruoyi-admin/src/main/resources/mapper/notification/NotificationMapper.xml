@@ -45,7 +45,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectNotificationVo"/>
         where id = #{id} and del_flag = 0
     </select>
-        
+    <select id="getNotificationListByRecipientId" resultMap="NotificationResult">
+        SELECT id FROM notification where JSON_CONTAINS( recipient_id , #{recipientId}, '$')
+    </select>
+
     <insert id="insertNotification" parameterType="Notification" useGeneratedKeys="true" keyProperty="id">
         insert into notification
         <trim prefix="(" suffix=")" suffixOverrides=",">

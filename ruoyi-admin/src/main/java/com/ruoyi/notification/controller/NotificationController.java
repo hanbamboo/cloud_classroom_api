@@ -37,7 +37,7 @@ public class NotificationController extends BaseController
     /**
      * 查询课堂通知列表
      */
-    @PreAuthorize("@ss.hasPermi('notification:info:list')")
+//    @PreAuthorize("@ss.hasPermi('notification:info:list')")
     @GetMapping("/list")
     public TableDataInfo list(Notification notification)
     {
@@ -62,7 +62,7 @@ public class NotificationController extends BaseController
     /**
      * 获取课堂通知详细信息
      */
-    @PreAuthorize("@ss.hasPermi('notification:info:query')")
+//    @PreAuthorize("@ss.hasPermi('notification:info:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -72,7 +72,7 @@ public class NotificationController extends BaseController
     /**
      * 新增课堂通知
      */
-    @PreAuthorize("@ss.hasPermi('notification:info:add')")
+//    @PreAuthorize("@ss.hasPermi('notification:info:add')")
     @Log(title = "课堂通知", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Notification notification)
@@ -80,10 +80,17 @@ public class NotificationController extends BaseController
         return toAjax(notificationService.insertNotification(notification));
     }
 
+    @Log(title = "课堂通知", businessType = BusinessType.INSERT)
+    @GetMapping("/app/num")
+    public AjaxResult getNotificationNum(Notification notification)
+    {
+        return AjaxResult.success("操作成功！",notificationService.getNotificationNum(notification));
+    }
+
     /**
      * 修改课堂通知
      */
-    @PreAuthorize("@ss.hasPermi('notification:info:edit')")
+//    @PreAuthorize("@ss.hasPermi('notification:info:edit')")
     @Log(title = "课堂通知", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody Notification notification)
@@ -94,7 +101,7 @@ public class NotificationController extends BaseController
     /**
      * 删除课堂通知
      */
-    @PreAuthorize("@ss.hasPermi('notification:info:remove')")
+//    @PreAuthorize("@ss.hasPermi('notification:info:remove')")
     @Log(title = "课堂通知", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
