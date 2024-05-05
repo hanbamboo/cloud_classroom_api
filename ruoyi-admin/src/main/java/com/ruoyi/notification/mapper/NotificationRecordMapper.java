@@ -2,6 +2,7 @@ package com.ruoyi.notification.mapper;
 
 import java.util.List;
 import com.ruoyi.notification.domain.NotificationRecord;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 已读通知Mapper接口
@@ -18,6 +19,7 @@ public interface NotificationRecordMapper
      * @return 已读通知
      */
     public NotificationRecord selectNotificationRecordById(Long id);
+    public NotificationRecord selectNotificationRecordByNoticeId(@Param("id") Long id,@Param("userId") Long userId);
 
     /**
      * 查询已读通知列表
@@ -26,6 +28,7 @@ public interface NotificationRecordMapper
      * @return 已读通知集合
      */
     public List<NotificationRecord> selectNotificationRecordList(NotificationRecord notificationRecord);
+    public NotificationRecord selectNotificationRecord(NotificationRecord notificationRecord);
 
     /**
      * 新增已读通知

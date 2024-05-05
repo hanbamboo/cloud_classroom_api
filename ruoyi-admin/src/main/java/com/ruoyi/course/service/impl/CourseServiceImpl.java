@@ -1,10 +1,13 @@
 package com.ruoyi.course.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.course.domain.CourseDTO;
 import com.ruoyi.course.domain.CourseNumStatus;
+import com.ruoyi.course.domain.CourseRecord;
 import com.ruoyi.course.mapper.CourseRecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,19 +53,20 @@ public class CourseServiceImpl implements ICourseService {
     @Override
     public List<CourseDTO> selectCourseListApp(CourseDTO course) {
         List<CourseDTO> courses = courseMapper.selectCourseListApp(course);
-        CourseNumStatus courseNumStatus = new CourseNumStatus();
-        courseNumStatus.setStudentId(course.getTeacherId());
+        CourseRecord courseRecord = new CourseRecord();
+        courseRecord.setCourseId(course.getId());
         for (CourseDTO cours : courses) {
-            courseNumStatus.setCourseId(cours.getId());
-            CourseNumStatus res = courseRecordMapper.getCourseStudentNumber(courseNumStatus);
-            if(res!=null){
-                cours.setSelected(res.getSelectNum());
-                cours.setExists(res.getExists());
-            }else{
-                cours.setSelected(0);
-                cours.setExists("no");
+            cours.setExists("no");
+            cours.setSelected(0);
+            List<CourseRecord> courseRecords= courseRecordMapper.selectCourseRecordList(courseRecord);
+            if(courseRecords!=null&&!courseRecords.isEmpty()){
+                cours.setSelected(courseRecords.size());
+                for (CourseRecord record : courseRecords) {
+                    if(Objects.equals(record.getStudentId(), SecurityUtils.getUserId())){
+                        cours.setExists("yes");
+                    }
+                }
             }
-
         }
         return courses;
     }

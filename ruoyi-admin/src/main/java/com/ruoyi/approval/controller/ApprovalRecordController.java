@@ -2,6 +2,8 @@ package com.ruoyi.approval.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.approval.domain.ApprovalRecordDetailDTO;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,6 +48,7 @@ public class ApprovalRecordController extends BaseController
         return getDataTable(list);
     }
 
+
     /**
      * 导出审批结果列表
      */
@@ -80,7 +83,12 @@ public class ApprovalRecordController extends BaseController
     {
         return AjaxResult.success(approvalRecordService.getApprovalRecordApp(approvalRecord));
     }
-
+    @GetMapping("/app/detail/{id}")
+    public AjaxResult getDetail(@PathVariable("id") String id)
+    {
+        ApprovalRecordDetailDTO list = approvalRecordService.selectApprovalRecordDetailByLeaveId(id);
+        return AjaxResult.success(list);
+    }
     /**
      * 新增审批结果
      */

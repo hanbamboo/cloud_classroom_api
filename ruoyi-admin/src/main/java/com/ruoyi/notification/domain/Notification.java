@@ -49,9 +49,46 @@ public class Notification extends BaseEntity
     @Excel(name = "系统自动生成、教师发布、学生提交等字典")
     private Long source;
 
+    private String[] roles;
     /** 附件地址 */
     @Excel(name = "附件地址")
     private String attachments;
+
+    private int isRead;
+    private Long hasRead;
+    private Long totalRead;
+
+    public String[] getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String[] roles) {
+        this.roles = roles;
+    }
+
+    public Long getHasRead() {
+        return hasRead;
+    }
+
+    public void setHasRead(Long hasRead) {
+        this.hasRead = hasRead;
+    }
+
+    public Long getTotalRead() {
+        return totalRead;
+    }
+
+    public void setTotalRead(Long totalRead) {
+        this.totalRead = totalRead;
+    }
+
+    public int getIsRead() {
+        return isRead;
+    }
+
+    public void setIsRead(int isRead) {
+        this.isRead = isRead;
+    }
 
     /** $column.columnComment */
     private Long delFlag;

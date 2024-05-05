@@ -17,7 +17,7 @@ public interface LeaveApplicationMapper
      * @param id 学生请假信息主键
      * @return 学生请假信息
      */
-    public LeaveApplication selectLeaveApplicationById(Long id);
+    public LeaveApplication selectLeaveApplicationById(String id);
 
     /**
      * 查询学生请假信息列表

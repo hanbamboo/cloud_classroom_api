@@ -25,13 +25,16 @@
         <result property="leaveId" column="leave_id"/>
         <result property="approverId" column="approver_id"/>
         <result property="approverName" column="approver_name"/>
+        <result property="approvalTime" column="approval_time"/>
         <result property="status" column="status"/>
+        <result property="finalStatus" column="final_status"/>
         <result property="superiorId" column="superior_id"/>
         <result property="superiorName" column="superior_name"/>
         <result property="forwardId" column="forward_id"/>
         <result property="forwardName" column="forward_name"/>
         <result property="studentId" column="student_id"/>
         <result property="studentName" column="student_name"/>
+        <result property="comment" column="comment"/>
         <result property="reason" column="reason"/>
         <result property="type" column="type"/>
         <result property="startTime" column="start_time"/>
@@ -96,6 +99,7 @@
                su3.nick_name as forward_name,
                su4.nick_name as superior_name,
                la.reason,
+               la.status as final_status,
                la.type,
                la.start_time,
                la.end_time
@@ -106,9 +110,38 @@
                  left join sys_user su3 on ar.forward_id = su3.user_id
                  left join sys_user su4 on ar.superior_id = su4.user_id
         where ar.approver_id = #{approverId}
-          and ar.status = 0
           and la.del_flag = 0
           and ar.del_flag = 0
+        order by ar.status,ar.create_time desc
+    </select>
+    <select id="selectApprovalRecordListByLeaveId" resultMap="ApprovalRecordResultDTO" parameterType="String">
+        select ar.id,
+               ar.leave_id,
+               ar.approver_id,
+               ar.status,
+               ar.superior_id,
+               ar.forward_id,
+               ar.approval_time,
+               la.student_id,
+               ar.comment,
+               su1.nick_name as approver_name,
+               su2.nick_name as student_name,
+               su3.nick_name as forward_name,
+               su4.nick_name as superior_name,
+               la.type,
+               la.status as final_status,
+               la.start_time,
+               la.end_time
+        from approval_record ar
+                 left join leave_application la on ar.leave_id = la.id
+                 left join sys_user su1 on ar.approver_id = su1.user_id
+                 left join sys_user su2 on la.student_id = su2.user_id and la.id = ar.leave_id
+                 left join sys_user su3 on ar.forward_id = su3.user_id
+                 left join sys_user su4 on ar.superior_id = su4.user_id
+        where ar.leave_id = #{leaveId}
+          and la.del_flag = 0
+          and ar.del_flag = 0
+        order by ar.id
     </select>
 
     <insert id="insertApprovalRecord" parameterType="ApprovalRecord" useGeneratedKeys="true" keyProperty="id">

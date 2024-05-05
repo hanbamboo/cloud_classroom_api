@@ -2,6 +2,7 @@ package com.ruoyi.approval.service;
 
 import java.util.List;
 import com.ruoyi.approval.domain.ApprovalRecord;
+import com.ruoyi.approval.domain.ApprovalRecordDetailDTO;
 
 /**
  * 审批结果Service接口
@@ -27,6 +28,7 @@ public interface IApprovalRecordService
      */
     public List<ApprovalRecord> selectApprovalRecordList(ApprovalRecord approvalRecord);
     public List<ApprovalRecord> getApprovalRecordApp(ApprovalRecord approvalRecord);
+    public ApprovalRecordDetailDTO selectApprovalRecordDetailByLeaveId(String leaveId);
 
     /**
      * 新增审批结果

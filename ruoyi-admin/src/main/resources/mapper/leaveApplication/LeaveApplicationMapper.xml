@@ -41,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
     
-    <select id="selectLeaveApplicationById" parameterType="Long" resultMap="LeaveApplicationResult">
+    <select id="selectLeaveApplicationById" parameterType="String" resultMap="LeaveApplicationResult">
         <include refid="selectLeaveApplicationVo"/>
         where id = #{id} and del_flag = 0
     </select>

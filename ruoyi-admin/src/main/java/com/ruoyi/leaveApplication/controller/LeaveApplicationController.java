@@ -64,7 +64,7 @@ public class LeaveApplicationController extends BaseController
      */
 //    @PreAuthorize("@ss.hasPermi('leaveApplication:leave:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") Long id)
+    public AjaxResult getInfo(@PathVariable("id") String id)
     {
         return success(leaveApplicationService.selectLeaveApplicationById(id));
     }

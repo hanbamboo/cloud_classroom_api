@@ -46,6 +46,13 @@ public class NotificationController extends BaseController
         return getDataTable(list);
     }
 
+    @GetMapping("/all")
+    public AjaxResult all(Notification notification)
+    {
+        List<Notification> list = notificationService.selectNotificationList(notification);
+        return AjaxResult.success(list);
+    }
+
     /**
      * 导出课堂通知列表
      */

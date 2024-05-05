@@ -39,7 +39,7 @@ public class LeaveApplicationServiceImpl implements ILeaveApplicationService
      * @return 学生请假信息
      */
     @Override
-    public LeaveApplication selectLeaveApplicationById(Long id)
+    public LeaveApplication selectLeaveApplicationById(String id)
     {
         return leaveApplicationMapper.selectLeaveApplicationById(id);
     }
@@ -79,6 +79,8 @@ public class LeaveApplicationServiceImpl implements ILeaveApplicationService
                     ApprovalRecord approvalRecord = new ApprovalRecord();
                     approvalRecord.setLeaveId(leaveApplication.getId());
                     approvalRecord.setStatus(0L);
+                    approvalRecord.setCreateTime(DateUtils.getNowDate());
+                    approvalRecord.setCreateBy(SecurityUtils.getUsername());
                     approvalRecord.setApproverId(Long.parseLong(String.valueOf(object.get("id"))));
                    if(i==0){
                        Map<String,Object> forwardMap =  (Map<String, Object>) approver.get(i+1);
@@ -88,7 +90,7 @@ public class LeaveApplicationServiceImpl implements ILeaveApplicationService
                         Map<String,Object> forwardMap =  (Map<String, Object>) approver.get(i+1);
                         approvalRecord.setSuperiorId(Long.parseLong(String.valueOf(superiorMap.get("id"))));
                         approvalRecord.setForwardId(Long.parseLong(String.valueOf(forwardMap.get("id"))));
-                    }else if (i == approver.size()-1&&!leaveApplication.getStudentId().equals(SecurityUtils.getUserId())){
+                    }else if (i == approver.size()-1){
                         Map<String,Object> superiorMap =  (Map<String, Object>) approver.get(i-1);
                         approvalRecord.setSuperiorId(Long.parseLong(String.valueOf(superiorMap.get("id"))));
                     }
@@ -112,7 +114,23 @@ public class LeaveApplicationServiceImpl implements ILeaveApplicationService
     {
         leaveApplication.setUpdateTime(DateUtils.getNowDate());
         leaveApplication.setUpdateBy(SecurityUtils.getUsername());
-        return leaveApplicationMapper.updateLeaveApplication(leaveApplication);
+        Long studentId = leaveApplication.getStudentId();
+        leaveApplication.setStudentId(null);
+        int a =leaveApplicationMapper.updateLeaveApplication(leaveApplication);
+        ApprovalRecord approvalRecord = new ApprovalRecord();
+        approvalRecord.setLeaveId(leaveApplication.getId());
+        approvalRecord.setApproverId(studentId);
+        approvalRecord.setStatus(0L);
+        List<ApprovalRecord> result =approvalRecordMapper.selectApprovalRecordList(approvalRecord);
+        if(result!=null&&!result.isEmpty()){
+            for (ApprovalRecord record : result) {
+                record.setStatus(1L);
+                record.setComment("该审批已抄送至发起人");
+                record.setApprovalTime(DateUtils.getNowDate());
+                a += approvalRecordMapper.updateApprovalRecord(record);
+            }
+        }
+        return a ;
     }
 
     /**

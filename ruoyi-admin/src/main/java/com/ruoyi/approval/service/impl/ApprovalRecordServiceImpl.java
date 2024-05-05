@@ -1,8 +1,13 @@
 package com.ruoyi.approval.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.approval.domain.ApprovalRecordDTO;
+import com.ruoyi.approval.domain.ApprovalRecordDetailDTO;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.leaveApplication.domain.LeaveApplication;
+import com.ruoyi.leaveApplication.mapper.LeaveApplicationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.approval.mapper.ApprovalRecordMapper;
@@ -20,6 +25,8 @@ public class ApprovalRecordServiceImpl implements IApprovalRecordService
 {
     @Autowired
     private ApprovalRecordMapper approvalRecordMapper;
+    @Autowired
+    private LeaveApplicationMapper leaveApplicationMapper;
 
     /**
      * 查询审批结果
@@ -48,6 +55,21 @@ public class ApprovalRecordServiceImpl implements IApprovalRecordService
     @Override
     public List<ApprovalRecord> getApprovalRecordApp(ApprovalRecord approvalRecord) {
         return approvalRecordMapper.getApprovalRecordApp(approvalRecord);
+    }
+
+    @Override
+    public ApprovalRecordDetailDTO selectApprovalRecordDetailByLeaveId(String leaveId) {
+        List<ApprovalRecordDTO> records = approvalRecordMapper.selectApprovalRecordListByLeaveId(leaveId);
+        LeaveApplication leaveApplication = leaveApplicationMapper.selectLeaveApplicationById(leaveId);
+        ApprovalRecordDetailDTO detail = new ApprovalRecordDetailDTO();
+        detail.setLeaveId(leaveApplication.getId());
+        detail.setType(leaveApplication.getType());
+        detail.setReason(leaveApplication.getReason());
+        detail.setStartTime(leaveApplication.getStartTime());
+        detail.setEndTime(leaveApplication.getEndTime());
+        detail.setStatus(leaveApplication.getStatus());
+        detail.setDetails(records);
+        return detail;
     }
 
     /**

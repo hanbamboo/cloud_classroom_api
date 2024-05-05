@@ -27,12 +27,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
              and del_flag = 0
         </where>
     </select>
-    
+    <select id="selectNotificationRecord" parameterType="NotificationRecord" resultMap="NotificationRecordResult">
+        <include refid="selectNotificationRecordVo"/>
+        <where>
+            <if test="notificationId != null "> and notification_id = #{notificationId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            and del_flag = 0
+        </where>
+    </select>
     <select id="selectNotificationRecordById" parameterType="Long" resultMap="NotificationRecordResult">
         <include refid="selectNotificationRecordVo"/>
         where id = #{id} and del_flag = 0
     </select>
-        
+    <select id="selectNotificationRecordByNoticeId" resultMap="NotificationRecordResult">
+        <include refid="selectNotificationRecordVo"/>
+        where notification_id = #{id} and user_id = #{userId} and del_flag = 0
+    </select>
+
     <insert id="insertNotificationRecord" parameterType="NotificationRecord" useGeneratedKeys="true" keyProperty="id">
         insert into notification_record
         <trim prefix="(" suffix=")" suffixOverrides=",">

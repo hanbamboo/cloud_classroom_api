@@ -2,6 +2,7 @@ package com.ruoyi.approval.mapper;
 
 import java.util.List;
 import com.ruoyi.approval.domain.ApprovalRecord;
+import com.ruoyi.approval.domain.ApprovalRecordDTO;
 
 /**
  * 审批结果Mapper接口
@@ -27,6 +28,7 @@ public interface ApprovalRecordMapper
      */
     public List<ApprovalRecord> selectApprovalRecordList(ApprovalRecord approvalRecord);
     public List<ApprovalRecord> getApprovalRecordApp(ApprovalRecord approvalRecord);
+    public List<ApprovalRecordDTO> selectApprovalRecordListByLeaveId(String leaveId);
 
     /**
      * 新增审批结果

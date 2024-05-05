@@ -29,7 +29,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectNotificationList" parameterType="Notification" resultMap="NotificationResult">
         <include refid="selectNotificationVo"/>
         <where>  
-            <if test="recipientId != null  and recipientId != ''"> and recipient_id = #{recipientId}</if>
+            <if test="recipientId != null  and recipientId != ''">
+               and  (
+                <foreach item="item" index="index" collection="roles" separator="or">
+                    JSON_CONTAINS(recipient_id, #{item}, '$')
+                </foreach>
+                or JSON_CONTAINS(recipient_id, #{recipientId}, '$')
+                )
+                </if>
             <if test="title != null  and title != ''"> and title = #{title}</if>
             <if test="content != null  and content != ''"> and content = #{content}</if>
             <if test="type != null "> and type = #{type}</if>
@@ -38,7 +45,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="source != null "> and source = #{source}</if>
             <if test="attachments != null  and attachments != ''"> and attachments = #{attachments}</if>
              and del_flag = 0
+
         </where>
+        order by priority, send_time desc
     </select>
     
     <select id="selectNotificationById" parameterType="Long" resultMap="NotificationResult">

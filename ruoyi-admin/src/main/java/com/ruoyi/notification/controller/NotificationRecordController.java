@@ -37,7 +37,7 @@ public class NotificationRecordController extends BaseController
     /**
      * 查询已读通知列表
      */
-    @PreAuthorize("@ss.hasPermi('notification:record:list')")
+//    @PreAuthorize("@ss.hasPermi('notification:record:list')")
     @GetMapping("/list")
     public TableDataInfo list(NotificationRecord notificationRecord)
     {
@@ -62,7 +62,7 @@ public class NotificationRecordController extends BaseController
     /**
      * 获取已读通知详细信息
      */
-    @PreAuthorize("@ss.hasPermi('notification:record:query')")
+//    @PreAuthorize("@ss.hasPermi('notification:record:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -72,7 +72,7 @@ public class NotificationRecordController extends BaseController
     /**
      * 新增已读通知
      */
-    @PreAuthorize("@ss.hasPermi('notification:record:add')")
+//    @PreAuthorize("@ss.hasPermi('notification:record:add')")
     @Log(title = "已读通知", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody NotificationRecord notificationRecord)
@@ -83,7 +83,7 @@ public class NotificationRecordController extends BaseController
     /**
      * 修改已读通知
      */
-    @PreAuthorize("@ss.hasPermi('notification:record:edit')")
+//    @PreAuthorize("@ss.hasPermi('notification:record:edit')")
     @Log(title = "已读通知", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody NotificationRecord notificationRecord)
@@ -94,7 +94,7 @@ public class NotificationRecordController extends BaseController
     /**
      * 删除已读通知
      */
-    @PreAuthorize("@ss.hasPermi('notification:record:remove')")
+//    @PreAuthorize("@ss.hasPermi('notification:record:remove')")
     @Log(title = "已读通知", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
