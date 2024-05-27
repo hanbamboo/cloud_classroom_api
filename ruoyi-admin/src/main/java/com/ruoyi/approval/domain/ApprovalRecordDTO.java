@@ -13,6 +13,7 @@ public class ApprovalRecordDTO {
     private String approverName;
     private Long superiorId;
     private String superiorName;
+    private String img;
     private Long forwardId;
     private String forwardName;
     private Long studentId;

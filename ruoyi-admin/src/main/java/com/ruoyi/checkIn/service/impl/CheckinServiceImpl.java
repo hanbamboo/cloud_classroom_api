@@ -1,17 +1,24 @@
 package com.ruoyi.checkIn.service.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.checkIn.domain.CheckinHistoryVo;
 import com.ruoyi.checkIn.domain.CheckinVo;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.websocket.server.WebSocketServer;
 import com.ruoyi.course.domain.Course;
 import com.ruoyi.course.domain.CourseDTO;
@@ -19,11 +26,15 @@ import com.ruoyi.course.domain.CourseRecord;
 import com.ruoyi.course.domain.CourseRecordDTO;
 import com.ruoyi.course.mapper.CourseMapper;
 import com.ruoyi.course.mapper.CourseRecordMapper;
+import com.ruoyi.web.controller.common.CommonController;
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.checkIn.mapper.CheckinMapper;
 import com.ruoyi.checkIn.domain.Checkin;
 import com.ruoyi.checkIn.service.ICheckinService;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 /**
  * 签到信息Service业务层处理
@@ -43,6 +54,9 @@ public class CheckinServiceImpl implements ICheckinService {
     private WebSocketServer webSocketServer;
     @Autowired
     private RedisCache redisCache;
+    @Autowired
+    private CommonController commonController;
+
 
     /**
      * 查询签到信息
@@ -110,15 +124,23 @@ public class CheckinServiceImpl implements ICheckinService {
         List<CheckinHistoryVo> list = checkinMapper.selectCheckinListApp(checkin);
         DecimalFormat df = new DecimalFormat("#.##");
         list.forEach(item -> {
-            double rate = item.getCourseCountPeople() * 1.0 / item.getCourseCountTotal();
-            String formattedRate = df.format(rate);
-            item.setCheckinRateNormal(Double.parseDouble(formattedRate));
-            rate = item.getCourseCountOut() * 1.0 / item.getCourseCountTotal();
-            formattedRate = df.format(rate);
-            item.setCheckinRateOut(Double.parseDouble(formattedRate));
+            if(item.getCourseCountTotal() > 0){
+                double rate = item.getCourseCountPeople() * 1.0 / item.getCourseCountTotal();
+                String formattedRate = df.format(rate);
+                item.setCheckinRateNormal(Double.parseDouble(formattedRate));
+                rate = item.getCourseCountOut() * 1.0 / item.getCourseCountTotal();
+                formattedRate = df.format(rate);
+                item.setCheckinRateOut(Double.parseDouble(formattedRate));
+            }else{
+                item.setCheckinRateNormal(0.0);
+                item.setCheckinRateOut(0.0);
+            }
+
         });
         return list;
     }
+
+
 
     /**
      * 新增签到信息
@@ -141,6 +163,17 @@ public class CheckinServiceImpl implements ICheckinService {
                 checkinVo.setMethodName(dictDatum.getDictLabel());
             }
         }
+        if(checkin.getMethod()==3){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("type","checkin");
+            jsonObject.put("courseId",checkin.getCourseId());
+            jsonObject.put("checkinId",checkin.getId());
+            jsonObject.put("method",checkin.getMethod());
+            jsonObject.put("teacherId",checkin.getTeacherId());
+            jsonObject.put("expire",checkin.getEndTime());
+            checkin.setSource(jsonObject.toJSONString());
+        }
+
         checkinVo.setCourseId(checkin.getCourseId());
         checkinVo.setTeacherId(checkin.getTeacherId());
         checkinVo.setId(checkin.getId());

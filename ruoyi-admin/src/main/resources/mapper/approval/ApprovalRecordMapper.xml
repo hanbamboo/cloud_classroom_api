@@ -27,6 +27,7 @@
         <result property="approverName" column="approver_name"/>
         <result property="approvalTime" column="approval_time"/>
         <result property="status" column="status"/>
+        <result property="img" column="img"/>
         <result property="finalStatus" column="final_status"/>
         <result property="superiorId" column="superior_id"/>
         <result property="superiorName" column="superior_name"/>
@@ -99,6 +100,7 @@
                su3.nick_name as forward_name,
                su4.nick_name as superior_name,
                la.reason,
+               la.img,
                la.status as final_status,
                la.type,
                la.start_time,
@@ -129,6 +131,7 @@
                su3.nick_name as forward_name,
                su4.nick_name as superior_name,
                la.type,
+               la.img,
                la.status as final_status,
                la.start_time,
                la.end_time

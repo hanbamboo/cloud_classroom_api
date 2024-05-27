@@ -34,6 +34,15 @@ public class LeaveApplication extends BaseEntity
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "开始时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date startTime;
+    private String img;
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
 
     /** 结束时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
